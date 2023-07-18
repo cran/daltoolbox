@@ -16,7 +16,16 @@ functions.
 
 ## Installation
 
-You can install the development version of dal from
+The latest version of DAL Toolbox at CRAN is available at:
+<https://CRAN.R-project.org/package=daltoolbox>
+
+You can install the stable version of DAL Toolbox from CRAN with:
+
+``` r
+install.packages("daltoolbox")
+```
+
+You can install the development version of DAL Toolbox from
 [GitHub](https://github.com/) with:
 
 ``` r
@@ -27,10 +36,7 @@ devtools::install_github("cefet-rj-dal/daltoolbox", force=TRUE, dependencies=FAL
 ## Examples
 
 The DAL Toolbox examples are made available at:
-<https://nbviewer.org/github/cefet-rj-dal/daltoolbox-examples/tree/main/>
-
-A demo video is provided at:
-<https://eic.cefet-rj.br/~dal/leveraging-experiment-lines-to-data-analytics/>
+<https://nbviewer.org/github/cefet-rj-dal/daltoolbox-examples/tree/main>
 
 The examples are organized according to general (data preprocessing),
 clustering, classification, regression, and time series functions.
