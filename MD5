@@ -1,4 +1,4 @@
-102041ac4a91c4a896bcea3c8aea1bfc *DESCRIPTION
+730d98085ac7c5bf368298f99d91e81c *DESCRIPTION
 aac2a05f23cecc56e0b9930dd1433749 *LICENSE
 fa7cd8f41e31a39f0a8ea9921ad37378 *NAMESPACE
 d0d13ffed8445c1454d803ce0e6e4965 *R/cla_classification.R
@@ -9,7 +9,7 @@ f6ea7d3f6bd4c6d89714e8829aada8ec *R/cla_majority.R
 bb086776dac2f6e2d5f574c8765b76ea *R/cla_nb.R
 abff6153aa06a4dedc56f6bb0142c539 *R/cla_rf.R
 56581483816bef52acc92f0419a19122 *R/cla_svm.R
-ffc92234c07d9fdce31189fa87cedde3 *R/cla_tune.R
+92667e4a09801d9fd1cc149d4a5b6ef9 *R/cla_tune.R
 b2b9d7e7a61adf45acfc8bdae3f2f912 *R/clu_clusterer.R
 a1268279713cee50d1dd452d82cbab36 *R/clu_dbscan.R
 64ce40e96c1fd4db0e514c16d0e5a6ff *R/clu_kmeans.R
@@ -22,7 +22,7 @@ a1268279713cee50d1dd452d82cbab36 *R/clu_dbscan.R
 12795e05d3320af8598677e57d95704a *R/dal_fit_curvature_min.R
 45c21e72f27e16e0aa192cc346029575 *R/dal_learner.R
 7551dbdb570c1acc1858be0bfd85952b *R/dal_norm_minmax.R
-7c965f4901b8547fbabb621b7933f157 *R/dal_norm_zscore.R
+5dfd2e965a216c4508bf7d18d59b72c8 *R/dal_norm_zscore.R
 5d6a9b4f89e1d4f4a14faf2820d2f0a3 *R/dal_outliers.R
 b5323f991f7691f5542f1ed88e2815d2 *R/dal_pca.R
 6bb2a8664a2ec42a3607da011414698d *R/dal_predictor.R
@@ -44,13 +44,13 @@ b65c8bab226784b12b13ec08c8da5a7e *R/reg_mlp.R
 efd625016b89330257ae1a1d53a48143 *R/reg_regression.R
 788542d75118621fbf852a76bf33f993 *R/reg_rf.R
 512a5e4d6fb47f6f78ee36b48ed929d5 *R/reg_svm.R
-5a190e8898d99636acf82f0f1c9bb1d3 *R/reg_tune.R
+481eeec22a6577a12e770974bfee2da9 *R/reg_tune.R
 600c5963810c8b4508d07d13395d04b2 *R/ts_arima.R
-e44efb2c6ab7f37f5674be13c2e7a242 *R/ts_conv1d.R
+0bf14d37aa79a9077fb58190857b169c *R/ts_conv1d.R
 87bcc3f61d7d88db2c0669e2157aad95 *R/ts_data.R
 b41da8382d1876d9c78fae833fb2aac1 *R/ts_elm.R
 d32683e1ba35431561af4ef5bfa102f0 *R/ts_knn.R
-b272bdd2fe8858049f54e7abb9b80ee9 *R/ts_lstm.R
+b958dc34ee8dcf36bba7ac5bf313d4c6 *R/ts_lstm.R
 278399a1abfa667b0f811b55f239bc9f *R/ts_mlp.R
 4bc339fc1164737a8456c08bdeb809f2 *R/ts_norm_an.R
 c5118d4fb9789ff172056f7acad70524 *R/ts_norm_diff.R
@@ -63,8 +63,8 @@ a3e07ee585738b36e6bac852530889ad *R/ts_norm_ean.R
 40a9f927fa2200cacf5e1942979b41d8 *R/ts_rf.R
 aac7e633759c9b88a9b78a3f646e4268 *R/ts_sample.R
 6d689a9ae1e42dcbaf1606596bf6abf8 *R/ts_svm.R
-98fbcb21632fcd5b0c261dcfdb5a28c8 *R/ts_tune.R
-bac12637abfb9078aa33b83a21a74051 *README.md
+fec3fc99ed99019a4a585068c3307c95 *R/ts_tune.R
+7b0a1ab740ad3b9dc2f622a490c817c3 *README.md
 26d3c1fa771286aba6e79491d4c75f16 *data/Boston.RData
 1d1da3887919aef1f5620ec6856b42a0 *data/sin_data.RData
 30f22c83fbf3cb04d20aa61993e026ec *inst/python/python_basics.py
@@ -87,7 +87,7 @@ ab2bf973314005c132b831f797e0e74d *man/cla_knn.Rd
 ab4d2f447e9cba366b53a12db8bb8698 *man/cla_nb.Rd
 47d9c256bd8f38582d001f86feef8b13 *man/cla_rf.Rd
 34d9900030eec237a1f9dc096662a2c9 *man/cla_svm.Rd
-b6ad75bf18d2b42c47e0abcd8bbe54ff *man/cla_tune.Rd
+b2d4019332bd48662aec6f3f629a320c *man/cla_tune.Rd
 2e84618a0e8e63cd540b36e17b893598 *man/classification.Rd
 f39ddaa097f6db2aeb37ed117611213d *man/clu_tune.Rd
 ac1e7544d885ba06c33e15308d6b1bd4 *man/cluster.Rd
@@ -136,7 +136,7 @@ c3657d90383c5bcaba44e38809cf5abc *man/reg_dtree.Rd
 32e63a69f751eef2753d750725827f8a *man/reg_mlp.Rd
 833e805ed3e21d5bd8a70ddf44a8c08a *man/reg_rf.Rd
 db1eeb2f18764be6e772bd38d8333909 *man/reg_svm.Rd
-85079a63e2b951cd4cfdb6bd4f4eee20 *man/reg_tune.Rd
+54d0f399ca7c949838219b6d374b842c *man/reg_tune.Rd
 6712643f72534d21a787329e463bd859 *man/regression.Rd
 9098fa48df5adda2eb94e4a5192579ad *man/sMAPE.ts.Rd
 56e8e02ac93d234a2461d3f7d7db9436 *man/sample_random.Rd
@@ -156,12 +156,12 @@ a097c0e728b9cf70b1ba6db8a5ea9624 *man/select_hyper.ts_tune.Rd
 8c498d52821d8ee60f418dfca03c82a4 *man/train_test_from_folds.Rd
 6aeef80113bd279f5515ffc1144b577b *man/transform.Rd
 d425b4d167b542b1914574322f673829 *man/ts_arima.Rd
-0e6fe366b5f3ed854f2b396b82f9df0b *man/ts_conv1d.Rd
+cf911b04629a8f796612287478dc0df5 *man/ts_conv1d.Rd
 498605a802da7b53d54bf4e4171861c0 *man/ts_data.Rd
 4a9cbf692f61c5ab1b9a088fd8cbf627 *man/ts_elm.Rd
 336ef192a2570441b943eaf9be345e31 *man/ts_head.Rd
 6b84d5dea32c3f0715d2d5f75072aa69 *man/ts_knn.Rd
-6ada0ebb2b219c34050e3e2ef0b3dad6 *man/ts_lstm.Rd
+af7c01458a34918b124ebff8a1e0d551 *man/ts_lstm.Rd
 185ce9744b073abc2ce51a24fca20bec *man/ts_mlp.Rd
 131ff320b3db1df5789fcb3f19328872 *man/ts_norm_an.Rd
 60d3f6cfb9d4ad57097ac22a8dae5441 *man/ts_norm_diff.Rd
@@ -174,5 +174,5 @@ db0817a062ce16f0832663ec45ee432d *man/ts_regsw.Rd
 848168ef88b1eddbf38b554dd973e83d *man/ts_rf.Rd
 1cfa69d05cdf52deec8bfee4255be355 *man/ts_sample.Rd
 85840ff2aee910bd2735f959dcd77061 *man/ts_svm.Rd
-dba6586abed3079f6cb91119ca1b5461 *man/ts_tune.Rd
-13072f847cc745ad6dde768f1ed01bc3 *man/zscore.Rd
+061a1a2e1303fe5a6401465bed8a5fb1 *man/ts_tune.Rd
+0fc45d0eeda7608fce557550d3de46a2 *man/zscore.Rd

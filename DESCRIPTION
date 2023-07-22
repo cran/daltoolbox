@@ -1,6 +1,6 @@
 Package: daltoolbox
 Title: Leveraging Experiment Lines to Data Analytics
-Version: 1.0.707
+Version: 1.0.717
 Authors@R: 
   c(    person(
             given = "Eduardo",
@@ -14,12 +14,6 @@ Authors@R:
             family = "Castro",
             role = c("aut", "ctb"),
             email = "antonio.castro@eic.cefet-rj.br"
-        ),
-        person(
-            given = "Cristiane",
-            family = "Gea",
-            role = c("aut", "ths"),
-            email = "cristiane.gea@eic.cefet-rj.br"
         ),
         person(
             given = "Heraldo",
@@ -69,11 +63,10 @@ Config/reticulate: list( packages = list( list(package = "scipy"),
         = "numpy"), list(package = "matplotlib"), list(package =
         "scikit-learn") ) )
 NeedsCompilation: no
-Packaged: 2023-07-18 02:28:09 UTC; gpca
+Packaged: 2023-07-20 02:02:25 UTC; gpca
 Author: Eduardo Ogasawara [aut, ths, cre]
     (<https://orcid.org/0000-0002-0466-0626>),
   Antonio Castro [aut, ctb],
-  Cristiane Gea [aut, ths],
   Heraldo Borges [aut, ths],
   Diego Carvalho [aut, ths],
   Joel Santos [aut, ths],
@@ -84,4 +77,4 @@ Author: Eduardo Ogasawara [aut, ths, cre]
 Maintainer: Eduardo Ogasawara <eogasawara@ieee.org>
 Depends: R (>= 3.5.0)
 Repository: CRAN
-Date/Publication: 2023-07-18 03:10:02 UTC
+Date/Publication: 2023-07-22 10:40:02 UTC
