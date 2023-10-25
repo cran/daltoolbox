@@ -1,12 +1,13 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# daltoolbox
+# <img src='https://raw.githubusercontent.com/cefet-rj-dal/daltoolbox/master/inst/logo.png' align='centre' height='150' width='139'/> DAL Toolbox
 
 <!-- badges: start -->
 
 ![GitHub Repo
 stars](https://img.shields.io/github/stars/cefet-rj-dal/daltoolbox?logo=Github)
+![GitHub Repo stars](https://cranlogs.r-pkg.org/badges/daltoolbox)
 <!-- badges: end -->
 
 The goal of DAL Toolbox is to provide a series data analytics functions
@@ -25,8 +26,8 @@ You can install the stable version of DAL Toolbox from CRAN with:
 install.packages("daltoolbox")
 ```
 
-You can install the development version of DAL Toolbox from
-[GitHub](https://github.com/) with:
+You can install the development version of DAL Toolbox from GitHub
+<https://github.com/cefet-rj-dal/daltoolbox> with:
 
 ``` r
 library(devtools)
@@ -54,3 +55,7 @@ library(daltoolbox)
 #>     transform
 ## loading DAL Toolbox
 ```
+
+## Bugs and new features request
+
+<https://github.com/cefet-rj-dal/daltoolbox/issues>
