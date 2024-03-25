@@ -1,6 +1,6 @@
 Package: daltoolbox
 Title: Leveraging Experiment Lines to Data Analytics
-Version: 1.0.727
+Version: 1.0.747
 Authors@R: 
   c(    person(
             given = "Eduardo",
@@ -54,7 +54,7 @@ Description: The natural increase in the complexity of current research experime
 License: MIT + file LICENSE
 URL: https://github.com/cefet-rj-dal/daltoolbox
 Encoding: UTF-8
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Imports: FNN, MLmetrics, caret, class, cluster, dbscan, dplyr, e1071,
         elmNNRcpp, forecast, ggplot2, nnet, randomForest, reshape,
         tree, reticulate
@@ -64,7 +64,7 @@ Config/reticulate: list( packages = list( list(package = "scipy"),
         "scikit-learn"), list(package = "functools"), list(package =
         "operator"), list(package = "sys") ) )
 NeedsCompilation: no
-Packaged: 2023-10-25 20:48:16 UTC; gpca
+Packaged: 2024-03-25 05:05:25 UTC; gpca
 Author: Eduardo Ogasawara [aut, ths, cre]
     (<https://orcid.org/0000-0002-0466-0626>),
   Antonio Castro [aut, ctb],
@@ -77,4 +77,4 @@ Author: Eduardo Ogasawara [aut, ths, cre]
     [cph]
 Maintainer: Eduardo Ogasawara <eogasawara@ieee.org>
 Repository: CRAN
-Date/Publication: 2023-10-25 21:40:02 UTC
+Date/Publication: 2024-03-25 07:20:02 UTC

@@ -1,4 +1,4 @@
-2a3fe76142a7b3a58e27fe63730bb20f *DESCRIPTION
+d8db0132978bab0dbfa9f33c04863db4 *DESCRIPTION
 aac2a05f23cecc56e0b9930dd1433749 *LICENSE
 c785be231db1b2e634886df189bf64a0 *NAMESPACE
 d0d13ffed8445c1454d803ce0e6e4965 *R/cla_classification.R
@@ -22,7 +22,7 @@ a1268279713cee50d1dd452d82cbab36 *R/clu_dbscan.R
 cda127818925376f43d44e4c3ab87845 *R/dal_tune.R
 5a07378d595c55b4e08f4a87653c8cb0 *R/data.R
 4bc65f55e4b2414979a07bea897920ac *R/globals.R
-bb5844a13544e114e3f6177d393e6d11 *R/graphics.R
+18a77a9d466ae36d0f9245bf98944fa6 *R/graphics.R
 7439af230036c304ac5946f4787aafb9 *R/reg_dtree.R
 143bb10c8603c55e7f397efd9df6e278 *R/reg_knn.R
 b65c8bab226784b12b13ec08c8da5a7e *R/reg_mlp.R
@@ -39,7 +39,7 @@ b5323f991f7691f5542f1ed88e2815d2 *R/trans_dt_pca.R
 7551dbdb570c1acc1858be0bfd85952b *R/trans_norm_minmax.R
 5dfd2e965a216c4508bf7d18d59b72c8 *R/trans_norm_zscore.R
 5d6a9b4f89e1d4f4a14faf2820d2f0a3 *R/trans_outliers.R
-6054f558e6ebd3e07295ea5ce3ff7e59 *R/trans_sample.R
+7513b668eec8672cc28c01ba121170b6 *R/trans_sample.R
 989330a5892e5611cd0adeab290302c1 *R/trans_sample_random.R
 92e0e3fd792818f5c9eeaf72e3eb23c1 *R/trans_sample_strat.R
 eb45c486d60b6b6abddfb83aef00a804 *R/trans_smoothing.R
@@ -63,10 +63,10 @@ a3e07ee585738b36e6bac852530889ad *R/ts_norm_ean.R
 7d3d4eddf72a02171a7a6d6fdb3a7c66 *R/ts_reg.R
 6c196c6c52522da2ab5cf6ef90d9c0ce *R/ts_regsw.R
 40a9f927fa2200cacf5e1942979b41d8 *R/ts_rf.R
-aac7e633759c9b88a9b78a3f646e4268 *R/ts_sample.R
+c97ab3a4f5039748f2aa3604a1de6063 *R/ts_sample.R
 6d689a9ae1e42dcbaf1606596bf6abf8 *R/ts_svm.R
 fec3fc99ed99019a4a585068c3307c95 *R/ts_tune.R
-19e5c7ba60cd7078c40cd074a417c832 *README.md
+8e640dbcd85167d9cd6b1746bde43f9b *README.md
 2f43421647e9bd4d663e35b14a39e93f *data/Boston.RData
 72eee23dd661249c800c3dd971510057 *data/sin_data.RData
 342241aa20c32921ffc623eb46487e2c *inst/logo.png
@@ -158,7 +158,7 @@ f7510da638b7984f37c72bf5dea33430 *man/smoothing_cluster.Rd
 14a4c2c4645848d925bd3439f0ff1f58 *man/smoothing_freq.Rd
 c7a5be5901301d8fef86a5c32d83b76d *man/smoothing_inter.Rd
 0c832575e9d3695fdb182039d44ef3c4 *man/sub-.ts_data.Rd
-ff6f0a373f0ee15247c970dfe84f8b65 *man/train_test.Rd
+c326aa79f7410b3db7e80422987c11fc *man/train_test.Rd
 b6521f02d1b665039874b100ecceea57 *man/train_test_from_folds.Rd
 df3324cf18e4a7dfc32ee1a09354024a *man/transform.Rd
 d425b4d167b542b1914574322f673829 *man/ts_arima.Rd
@@ -178,7 +178,7 @@ d4ee329e6d7243f5cdccf3cf6db66afd *man/ts_projection.Rd
 a677d15c02d492c23e42ec397fed63da *man/ts_reg.Rd
 db0817a062ce16f0832663ec45ee432d *man/ts_regsw.Rd
 848168ef88b1eddbf38b554dd973e83d *man/ts_rf.Rd
-1cfa69d05cdf52deec8bfee4255be355 *man/ts_sample.Rd
+8f5fa8990c13fa9c20c5390a212f4d61 *man/ts_sample.Rd
 85840ff2aee910bd2735f959dcd77061 *man/ts_svm.Rd
 061a1a2e1303fe5a6401465bed8a5fb1 *man/ts_tune.Rd
 c721439b1b3f9430b76e116148599d83 *man/zscore.Rd
