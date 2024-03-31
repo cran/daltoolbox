@@ -1,6 +1,6 @@
-d8db0132978bab0dbfa9f33c04863db4 *DESCRIPTION
-aac2a05f23cecc56e0b9930dd1433749 *LICENSE
-c785be231db1b2e634886df189bf64a0 *NAMESPACE
+ed69f303fd0eb6ebb0b3b595dc564886 *DESCRIPTION
+9c8add422ce18907bdd71f2fcb273da3 *LICENSE
+35f8f983efff95a25ec5c92c6b65c320 *NAMESPACE
 d0d13ffed8445c1454d803ce0e6e4965 *R/cla_classification.R
 2b4b8dc54466f20fbf88ec9348c91d19 *R/cla_dtree.R
 fc4a9fb23c84273e97e4805bebbf1d7d *R/cla_knn.R
@@ -26,7 +26,7 @@ cda127818925376f43d44e4c3ab87845 *R/dal_tune.R
 7439af230036c304ac5946f4787aafb9 *R/reg_dtree.R
 143bb10c8603c55e7f397efd9df6e278 *R/reg_knn.R
 b65c8bab226784b12b13ec08c8da5a7e *R/reg_mlp.R
-efd625016b89330257ae1a1d53a48143 *R/reg_regression.R
+c36855902d1d008b8bf7ed13a03191be *R/reg_regression.R
 788542d75118621fbf852a76bf33f993 *R/reg_rf.R
 512a5e4d6fb47f6f78ee36b48ed929d5 *R/reg_svm.R
 e9dab6fa54b5a1832fc28fc7e8924e12 *R/reg_tune.R
@@ -60,7 +60,7 @@ a3e07ee585738b36e6bac852530889ad *R/ts_norm_ean.R
 7cc6e5e58b8b900b1985515c528bb1cc *R/ts_norm_gminmax.R
 42c2315f2157cfddbf0005afd20e3856 *R/ts_norm_swminmax.R
 6f8d20eb4328fe58b854a5a812099aea *R/ts_projection.R
-7d3d4eddf72a02171a7a6d6fdb3a7c66 *R/ts_reg.R
+41bcdb6e1ca169415db3ee58cc86ac11 *R/ts_reg.R
 6c196c6c52522da2ab5cf6ef90d9c0ce *R/ts_regsw.R
 40a9f927fa2200cacf5e1942979b41d8 *R/ts_rf.R
 c97ab3a4f5039748f2aa3604a1de6063 *R/ts_sample.R
@@ -76,6 +76,7 @@ acc6005ce5b9533fb2ebf9a8670a0bfd *inst/logo.pptx
 c6a576f21f3f2a853d613cb8ac93a0fe *inst/python/ts_lstm.py
 5e3b808b5fb6e38b81a9668c13b00d28 *man/Boston.Rd
 f1e40f23cdff9cc0e6f2c0db3628684f *man/MSE.ts.Rd
+85d308e7566ddfee58f9090136e68969 *man/R2.ts.Rd
 a80d95502e3369bf1198a6bd3c5e12c1 *man/action.Rd
 760ea0f37642465cb19dba20142af2a2 *man/action.dal_transform.Rd
 22975a88c129db87673482ffec346408 *man/adjust_class_label.Rd
