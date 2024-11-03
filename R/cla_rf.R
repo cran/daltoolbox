@@ -7,7 +7,7 @@
 #'@param nodesize node size
 #'@param ntree number of trees
 #'@param mtry number of attributes to build tree
-#'@return obj
+#'@return returns a classification object
 #'@examples
 #'data(iris)
 #'slevels <- levels(iris$Species)
@@ -61,5 +61,8 @@ predict.cla_rf  <- function(object, x, ...) {
   x <- x[,object$x, drop = FALSE]
 
   prediction <- predict(object$model, x, type="prob")
+  prediction <- as.data.frame(prediction)
+  colnames(prediction) <- object$slevels
+
   return(prediction)
 }

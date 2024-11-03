@@ -2,10 +2,9 @@
 #'@description Creates a classification object that
 #' uses the Decision Tree algorithm for classification.
 #' It wraps the tree library.
-#'@param attribute attribute target to model building.
-#'@param slevels The possible values for the target classification.
-#'@return A classification object that uses the
-#' Decision Tree algorithm for classification.
+#'@param attribute attribute target to model building
+#'@param slevels the possible values for the target classification
+#'@return returns a classification object
 #'@examples
 #'data(iris)
 #'slevels <- levels(iris$Species)
@@ -51,6 +50,8 @@ predict.cla_dtree <- function(object, x, ...) {
   x <- x[,object$x, drop=FALSE]
 
   prediction <- predict(object$model, x, type="vector")
+  prediction <- as.data.frame(prediction)
+  colnames(prediction) <- object$slevels
 
   return(prediction)
 }

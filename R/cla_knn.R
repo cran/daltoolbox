@@ -2,9 +2,9 @@
 #'@description Classifies using the K-Nearest Neighbor algorithm.
 #' It wraps the class library.
 #'@param attribute attribute target to model building.
-#'@param slevels Possible values for the target classification.
-#'@param k A vector of integers indicating the number of neighbors to be considered.
-#'@return A knn object.
+#'@param slevels possible values for the target classification.
+#'@param k a vector of integers indicating the number of neighbors to be considered.
+#'@return returns a knn object.
 #'@examples
 #'data(iris)
 #'slevels <- levels(iris$Species)
@@ -54,6 +54,8 @@ predict.cla_knn  <- function(object, x, ...) {
 
   prediction <- class::knn(train=object$model$x, test=x, cl=object$model$y, prob=TRUE)
   prediction <- adjust_class_label(prediction)
+  prediction <- as.data.frame(prediction)
+  colnames(prediction) <- object$slevels
 
   return(prediction)
 }

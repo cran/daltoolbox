@@ -7,7 +7,7 @@
 #'@param size number of nodes that will be used in the hidden layer
 #'@param decay how quickly it decreases in gradient descent
 #'@param maxit maximum iterations
-#'@return a classification object
+#'@return returns a classification object
 #'@examples
 #'data(iris)
 #'slevels <- levels(iris$Species)
@@ -60,6 +60,8 @@ predict.cla_mlp  <- function(object, x, ...) {
   x <- x[,object$x, drop = FALSE]
 
   prediction <- predict(object$model, x, type="raw")
+  prediction <- as.data.frame(prediction)
+  colnames(prediction) <- object$slevels
 
   return(prediction)
 }

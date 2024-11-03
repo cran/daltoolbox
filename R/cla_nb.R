@@ -2,8 +2,8 @@
 #'@description Classification using the Naive Bayes algorithm
 #' It wraps the e1071 library.
 #'@param attribute attribute target to model building.
-#'@param slevels Possible values for the target classification.
-#'@return A classification object.
+#'@param slevels possible values for the target classification.
+#'@return returns a classification object.
 #'@examples
 #'data(iris)
 #'slevels <- levels(iris$Species)
@@ -49,6 +49,8 @@ predict.cla_nb  <- function(object, x, ...) {
   x <- x[,object$x, drop=FALSE]
 
   prediction <- predict(object$model, x, type="raw")
+  prediction <- as.data.frame(prediction)
+  colnames(prediction) <- object$slevels
 
   return(prediction)
 }
