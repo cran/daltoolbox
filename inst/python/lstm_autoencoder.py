@@ -3,13 +3,53 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
 torch.set_grad_enabled(True)
+from random import sample
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-from random import sample
 
+class Encoder(nn.Module):
+    def __init__(self, input_size, encoding_size, n_layers=1, dropout=0):
+        super(Encoder, self).__init__()
 
-class Autoencoder_TS(Dataset):
+        self.lstm = nn.LSTM(
+          input_size=input_size,
+          hidden_size=encoding_size,
+          dropout=dropout,
+          num_layers=n_layers,
+          batch_first=True  # True = (batch_size, seq_len, input_size)
+                            # False = (seq_len, batch_size, input_size) 
+                            #default = false
+        )
+
+    def forward(self, x):
+        x = self.lstm(x)
+        x = x[1][0][[-1], :, :]
+        x = x.reshape((x.shape[1], x.shape[0], x.shape[2]))
+        return x
+
+class Decoder(nn.Module):
+    def __init__(self, input_size, encoding_size, n_layers=1, dropout=0):
+        super(Decoder, self).__init__()
+
+        self.lstm = nn.LSTM(
+        input_size=encoding_size,
+        hidden_size=encoding_size,
+        dropout=dropout,
+        num_layers=n_layers,
+        batch_first=True
+        )
+        
+        self.output_layer = nn.Linear(encoding_size, input_size)
+
+    def forward(self, x):
+        x=self.lstm(x)
+        x=x[0]
+        x=self.output_layer(x)
+        x=x.reshape((x.shape[0], x.shape[2], x.shape[1]))
+        return x
+
+class LSTM_TS(Dataset):
     def __init__(self, num_samples, input_size):
         self.data = np.random.randn(num_samples, input_size)
 
@@ -22,39 +62,31 @@ class Autoencoder_TS(Dataset):
     def __getitem__(self, index):
         return self.data[index], self.data[index]
 
-class Autoencoder(nn.Module):
-    def __init__(self, input_size, encoding_size):
-        super(Autoencoder, self).__init__()
+class LSTM(nn.Module):
+    def __init__(self, input_size, encoding_size, n_layers=1, dropout=0):
+        super(LSTM, self).__init__()
 
-        self.encoder = nn.Sequential(
-            nn.Linear(input_size, 64),
-            nn.ReLU(True),
-            nn.Linear(64, encoding_size))
-
-        self.decoder = nn.Sequential(
-            nn.Linear(encoding_size, 64),
-            nn.ReLU(True),
-            nn.Linear(64, input_size))
-
+        self.encoder = Encoder(input_size, encoding_size, n_layers, dropout)
+        self.decoder = Decoder(input_size, encoding_size, n_layers, dropout)
+        
     def forward(self, x):
         x = self.encoder(x)
         x = self.decoder(x)
         return x
     
 # Create the autoencoder
-def autoencoder_create(input_size, encoding_size):
+def lae_create(input_size, encoding_size):
   input_size = int(input_size)
   encoding_size = int(encoding_size)
   
-  autoencoder = Autoencoder(input_size, encoding_size)
-  autoencoder = autoencoder.float()
-  return autoencoder  
+  lae = LSTM(input_size, encoding_size)
+  lae = lae.float()
+  return lae  
 
-
-# Train the autoencoder
-def autoencoder_train(autoencoder, data, batch_size=32, num_epochs = 1000, learning_rate = 0.001):
+# Train the lae
+def lae_train(lae, data, batch_size=20, num_epochs = 1000, learning_rate = 0.00001):
   criterion = nn.MSELoss()
-  optimizer = optim.Adam(autoencoder.parameters(), lr=learning_rate)
+  optimizer = optim.Adam(lae.parameters(), lr=learning_rate)
 
   train_loss = []
   val_loss = []
@@ -62,7 +94,7 @@ def autoencoder_train(autoencoder, data, batch_size=32, num_epochs = 1000, learn
   for epoch in range(num_epochs):
       # Train Test Split
       array = data.to_numpy()
-      array = array[:, :]
+      array = array[:, :, np.newaxis]
       
       val_sample = sample(range(1, data.shape[0], 1), k=int(data.shape[0]*0.3))
       train_sample = [v for v in range(1, data.shape[0], 1) if v not in val_sample]
@@ -70,20 +102,20 @@ def autoencoder_train(autoencoder, data, batch_size=32, num_epochs = 1000, learn
       train_data = array[train_sample, :]
       val_data = array[val_sample, :]
       
-      ds_train = Autoencoder_TS(train_data)
-      ds_val = Autoencoder_TS(val_data)
+      ds_train = LSTM_TS(train_data)
+      ds_val = LSTM_TS(val_data)
       train_loader = DataLoader(ds_train, batch_size=batch_size)
       val_loader = DataLoader(ds_val, batch_size=batch_size)
     
       # Train
       train_epoch_loss = []
       val_epoch_loss = []
-      autoencoder.train()
+      lae.train()
       for train_data in train_loader:
           train_input, _ = train_data
           train_input = train_input.float()
           optimizer.zero_grad()
-          train_output = autoencoder(train_input)
+          train_output = lae(train_input)
           train_batch_loss = criterion(train_output, train_input)
           train_batch_loss.backward()
           optimizer.step()
@@ -91,64 +123,64 @@ def autoencoder_train(autoencoder, data, batch_size=32, num_epochs = 1000, learn
           
           
       # Validation
-      autoencoder.eval()
+      lae.eval()
       for val_data in val_loader:
           val_input, _ = val_data
           val_input = val_input.float()
-          val_output = autoencoder(val_input)
+          val_output = lae(val_input)
           val_batch_loss = criterion(val_output, val_input)
           val_epoch_loss.append(val_batch_loss.item())
           
       train_loss.append(np.mean(train_epoch_loss))
       val_loss.append(np.mean(val_epoch_loss))
   
-  autoencoder.train_loss = train_loss
-  autoencoder.val_loss = val_loss
-  return autoencoder
+  lae.train_loss = train_loss
+  lae.val_loss = val_loss
+  return lae
 
-def autoencoder_fit(autoencoder, data, batch_size = 32, num_epochs = 1000, learning_rate = 0.001):
+def lae_fit(lae, data, batch_size = 20, num_epochs = 1000, learning_rate = 0.001, return_loss=False):
   batch_size = int(batch_size)
   num_epochs = int(num_epochs)
-  
-  autoencoder = autoencoder_train(autoencoder, data, num_epochs = num_epochs, learning_rate = 0.001)
-  return autoencoder
+
+  lae = lae_train(lae, data, batch_size = batch_size, num_epochs = num_epochs, learning_rate = learning_rate)
+  return lae
 
 
-def encode_data(autoencoder, data_loader):
+def lae_encode_data(lae, data_loader):
   # Encode the synthetic time series data using the trained autoencoder
   encoded_data = []
   for data in data_loader:
       inputs, _ = data
       inputs = inputs.float()
-      inputs = inputs.view(inputs.size(0), -1)
-      encoded = autoencoder.encoder(inputs)
+      encoded = lae.encoder(inputs)
       encoded_data.append(encoded.detach().numpy())
 
   encoded_data = np.concatenate(encoded_data, axis=0)
 
   return encoded_data
 
-def autoencoder_encode(autoencoder, data, batch_size = 32):
+def lstm_encode(lae, data, batch_size = 20):
   array = data.to_numpy()
-  array = array[:, :]
+  array = array[:, :, np.newaxis]
   
-  ds = Autoencoder_TS(array)
+  ds = LSTM_TS(array)
   train_loader = DataLoader(ds, batch_size=batch_size)
   
-  encoded_data = encode_data(autoencoder, train_loader)
+  encoded_data = lae_encode_data(lae, train_loader)
+  
+  encoded_data = encoded_data.reshape((encoded_data.shape[0], encoded_data.shape[2]))
   
   return(encoded_data)
 
 
-def encode_decode_data(autoencoder, data_loader):
+def lae_encode_decode_data(lae, data_loader):
   # Encode the synthetic time series data using the trained autoencoder
   encoded_decoded_data = []
   for data in data_loader:
       inputs, _ = data
       inputs = inputs.float()
-      inputs = inputs.view(inputs.size(0), -1)
-      encoded = autoencoder.encoder(inputs)
-      decoded = autoencoder.decoder(encoded)
+      encoded = lae.encoder(inputs)
+      decoded = lae.decoder(encoded)
       encoded_decoded_data.append(decoded.detach().numpy())
 
   encoded_decoded_data = np.concatenate(encoded_decoded_data, axis=0)
@@ -156,14 +188,14 @@ def encode_decode_data(autoencoder, data_loader):
   return encoded_decoded_data
 
 
-def autoencoder_encode_decode(autoencoder, data, batch_size = 32):
+def lstm_encode_decode(lae, data, batch_size = 20):
   array = data.to_numpy()
   array = array[:, :, np.newaxis]
   
-  ds = Autoencoder_TS(array)
+  ds = LSTM_TS(array)
   train_loader = DataLoader(ds, batch_size=batch_size)
   
-  encoded_decoded_data = encode_decode_data(autoencoder, train_loader)
+  encoded_decoded_data = lae_encode_decode_data(lae, train_loader)
   
   return(encoded_decoded_data)
   

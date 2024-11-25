@@ -1,15 +1,19 @@
+# -*- coding: utf-8 -*-
+"""
+Denoising Autoencoder (DNS AE)
+"""
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
-torch.set_grad_enabled(True)
 import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
 from random import sample
 
+torch.set_grad_enabled(True)
 
-class Autoencoder_TS(Dataset):
+class DNS_TS(Dataset):
     def __init__(self, num_samples, input_size):
         self.data = np.random.randn(num_samples, input_size)
 
@@ -22,42 +26,60 @@ class Autoencoder_TS(Dataset):
     def __getitem__(self, index):
         return self.data[index], self.data[index]
 
-class Autoencoder(nn.Module):
+
+class DNS_Autoencoder(nn.Module):
     def __init__(self, input_size, encoding_size):
-        super(Autoencoder, self).__init__()
-
+        super(DNS_Autoencoder, self).__init__()
+        
+        #Encode NN
         self.encoder = nn.Sequential(
-            nn.Linear(input_size, 64),
-            nn.ReLU(True),
-            nn.Linear(64, encoding_size))
-
+            nn.Linear(input_size, 64), #NN Input layer
+            nn.ReLU(True), #NN Hidden layer
+            nn.Linear(64, encoding_size) ##NN Output layter
+            )
+        
+        #Decode NN
         self.decoder = nn.Sequential(
-            nn.Linear(encoding_size, 64),
-            nn.ReLU(True),
-            nn.Linear(64, input_size))
-
+            nn.Linear(encoding_size, 64), #NN Input layer
+            nn.ReLU(True), #NN Hidden layer
+            nn.Linear(64, input_size) ##NN Output layter
+            )
+        
     def forward(self, x):
         x = self.encoder(x)
         x = self.decoder(x)
+        
         return x
+
+
+#Create denoising autoencoder (DNS AE)
+def add_noise(data, noise_factor=0.3):
+    noisy = torch.randn_like(data)
+    noisy = data + noisy * noise_factor
     
-# Create the autoencoder
-def autoencoder_create(input_size, encoding_size):
-  input_size = int(input_size)
-  encoding_size = int(encoding_size)
-  
-  autoencoder = Autoencoder(input_size, encoding_size)
-  autoencoder = autoencoder.float()
-  return autoencoder  
+    return noisy
+
+
+def dns_ae_create(input_size, encoding_size, noise_factor=0.3):
+    input_size = int(input_size)
+    encoding_size = int(encoding_size)
+    
+    dns = DNS_Autoencoder(input_size, encoding_size)
+    dns.float()
+    dns.noise_factor=noise_factor
+    
+    return dns
 
 
 # Train the autoencoder
-def autoencoder_train(autoencoder, data, batch_size=32, num_epochs = 1000, learning_rate = 0.001):
+def dns_train(dns, data, batch_size=32, num_epochs = 1000, learning_rate = 0.001):
   criterion = nn.MSELoss()
-  optimizer = optim.Adam(autoencoder.parameters(), lr=learning_rate)
+  optimizer = optim.Adam(dns.parameters(), lr=learning_rate)
 
   train_loss = []
   val_loss = []
+  
+  noise_factor = dns.noise_factor
   
   for epoch in range(num_epochs):
       # Train Test Split
@@ -70,20 +92,22 @@ def autoencoder_train(autoencoder, data, batch_size=32, num_epochs = 1000, learn
       train_data = array[train_sample, :]
       val_data = array[val_sample, :]
       
-      ds_train = Autoencoder_TS(train_data)
-      ds_val = Autoencoder_TS(val_data)
+      ds_train = DNS_TS(train_data)
+      ds_val = DNS_TS(val_data)
       train_loader = DataLoader(ds_train, batch_size=batch_size)
       val_loader = DataLoader(ds_val, batch_size=batch_size)
     
       # Train
       train_epoch_loss = []
       val_epoch_loss = []
-      autoencoder.train()
+      dns.train()
       for train_data in train_loader:
           train_input, _ = train_data
+          #Add noise to train data
+          train_input = add_noise(train_input, noise_factor=noise_factor)
           train_input = train_input.float()
           optimizer.zero_grad()
-          train_output = autoencoder(train_input)
+          train_output = dns(train_input)
           train_batch_loss = criterion(train_output, train_input)
           train_batch_loss.backward()
           optimizer.step()
@@ -91,64 +115,68 @@ def autoencoder_train(autoencoder, data, batch_size=32, num_epochs = 1000, learn
           
           
       # Validation
-      autoencoder.eval()
+      dns.eval()
       for val_data in val_loader:
           val_input, _ = val_data
+          #Add noise to validation data
+          val_input = add_noise(val_input, noise_factor=noise_factor)
           val_input = val_input.float()
-          val_output = autoencoder(val_input)
+          val_output = dns(val_input)
           val_batch_loss = criterion(val_output, val_input)
           val_epoch_loss.append(val_batch_loss.item())
           
       train_loss.append(np.mean(train_epoch_loss))
       val_loss.append(np.mean(val_epoch_loss))
   
-  autoencoder.train_loss = train_loss
-  autoencoder.val_loss = val_loss
-  return autoencoder
+  dns.train_loss = train_loss
+  dns.val_loss = val_loss
+  return dns
 
-def autoencoder_fit(autoencoder, data, batch_size = 32, num_epochs = 1000, learning_rate = 0.001):
+
+def dns_fit(dns, data, batch_size = 32, num_epochs = 1000, learning_rate = 0.001):
   batch_size = int(batch_size)
   num_epochs = int(num_epochs)
   
-  autoencoder = autoencoder_train(autoencoder, data, num_epochs = num_epochs, learning_rate = 0.001)
-  return autoencoder
+  dns = dns_train(dns, data, batch_size = batch_size, num_epochs = num_epochs, learning_rate = 0.001)
+  return dns
 
 
-def encode_data(autoencoder, data_loader):
+def dns_encode_data(dns, data_loader):
   # Encode the synthetic time series data using the trained autoencoder
   encoded_data = []
   for data in data_loader:
       inputs, _ = data
       inputs = inputs.float()
       inputs = inputs.view(inputs.size(0), -1)
-      encoded = autoencoder.encoder(inputs)
+      encoded = dns.encoder(inputs)
       encoded_data.append(encoded.detach().numpy())
 
   encoded_data = np.concatenate(encoded_data, axis=0)
 
   return encoded_data
 
-def autoencoder_encode(autoencoder, data, batch_size = 32):
+
+def dns_encode(dns, data, batch_size = 32):
   array = data.to_numpy()
   array = array[:, :]
   
-  ds = Autoencoder_TS(array)
+  ds = DNS_TS(array)
   train_loader = DataLoader(ds, batch_size=batch_size)
   
-  encoded_data = encode_data(autoencoder, train_loader)
+  encoded_data = dns_encode_data(dns, train_loader)
   
   return(encoded_data)
 
 
-def encode_decode_data(autoencoder, data_loader):
+def dns_encode_decode_data(dns, data_loader):
   # Encode the synthetic time series data using the trained autoencoder
   encoded_decoded_data = []
   for data in data_loader:
       inputs, _ = data
       inputs = inputs.float()
       inputs = inputs.view(inputs.size(0), -1)
-      encoded = autoencoder.encoder(inputs)
-      decoded = autoencoder.decoder(encoded)
+      encoded = dns.encoder(inputs)
+      decoded = dns.decoder(encoded)
       encoded_decoded_data.append(decoded.detach().numpy())
 
   encoded_decoded_data = np.concatenate(encoded_decoded_data, axis=0)
@@ -156,14 +184,13 @@ def encode_decode_data(autoencoder, data_loader):
   return encoded_decoded_data
 
 
-def autoencoder_encode_decode(autoencoder, data, batch_size = 32):
+def dns_encode_decode(dns, data, batch_size = 32):
   array = data.to_numpy()
   array = array[:, :, np.newaxis]
   
-  ds = Autoencoder_TS(array)
+  ds = DNS_TS(array)
   train_loader = DataLoader(ds, batch_size=batch_size)
   
-  encoded_decoded_data = encode_decode_data(autoencoder, train_loader)
+  encoded_decoded_data = dns_encode_decode_data(dns, train_loader)
   
   return(encoded_decoded_data)
-  
