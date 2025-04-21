@@ -36,23 +36,26 @@ devtools::install_github("cefet-rj-dal/daltoolbox", force=TRUE, dependencies=FAL
 
 ## Examples
 
+Graphics:
+<https://github.com/cefet-rj-dal/daltoolbox/tree/main/graphics/>
+
+Transformation:
+<https://github.com/cefet-rj-dal/daltoolbox/tree/main/transf/>
+
+Autoencoders:
+<https://github.com/cefet-rj-dal/daltoolbox/tree/main/autoencoder/>
+
 Classification:
 <https://github.com/cefet-rj-dal/daltoolbox/tree/main/classification/>
 
 Clustering:
 <https://github.com/cefet-rj-dal/daltoolbox/tree/main/clustering/>
 
-Graphics:
-<https://github.com/cefet-rj-dal/daltoolbox/tree/main/graphics/>
-
 Regression:
 <https://github.com/cefet-rj-dal/daltoolbox/tree/main/regression/>
 
 Time series:
 <https://github.com/cefet-rj-dal/daltoolbox/tree/main/timeseries/>
-
-Transformation:
-<https://github.com/cefet-rj-dal/daltoolbox/tree/main/transf/>
 
 The examples are organized according to general (data preprocessing),
 clustering, classification, regression, and time series functions. This
@@ -63,6 +66,10 @@ library(daltoolbox)
 #> Registered S3 method overwritten by 'quantmod':
 #>   method            from
 #>   as.zoo.data.frame zoo
+#> Registered S3 methods overwritten by 'forecast':
+#>   method  from 
+#>   head.ts stats
+#>   tail.ts stats
 #> 
 #> Attaching package: 'daltoolbox'
 #> The following object is masked from 'package:base':

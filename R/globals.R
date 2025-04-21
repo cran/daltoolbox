@@ -1,9 +1,9 @@
 utils::globalVariables(c("ts_lstm_create", "ts_lstm_fit", "ts_lstm_predict",
                          "ts_conv1d_create","ts_conv1d_fit", "ts_conv1d_predict",
-                         "autoencoder_create", "autoencoder_fit", "autoencoder_encode", "autoencoder_encode_decode",
-                         "vae_create", "vae_fit", "vae_encode", "vae_encode_decode", "aae_create",
-                         "aae_fit", "adv_encode", "adv_encode_decode", "c2den_create", "c2den_encode_decode",
-                         "c2den_fit", "cae2d_create", "cae_fit", "conv2d_encode_decode", "conv_encode", "conv_encode_decode",
-                         "dns_ae_create", "dns_ae_fit", "dns_encode", "lae_fit", "lstm_encode", "lstm_encode_decode", "return_loss",
-                         "var_encode", "var_encode_decode", "cae2d_fit", "cae_create", "dns_encode_decode",
-                         "lae_create", "sae_create", "sae_fit", "dns_fit", "c2den_encode"))
+                         "autoenc_create", "autoenc_fit", "autoenc_encode", "autoenc_encode_decode",
+                         "autoenc_adv_create", "autoenc_adv_fit", "autoenc_adv_encode", "autoenc_adv_encode_decode",
+                         "autoenc_conv_create", "autoenc_conv_fit", "autoenc_conv_encode", "autoenc_conv_encode_decode",
+                         "autoenc_lstm_create", "autoenc_lstm_fit", "autoenc_lstm_encode", "autoenc_lstm_encode_decode",
+                         "autoenc_stacked_create", "autoenc_stacked_fit", "autoenc_stacked_encode", "autoenc_stacked_encode_decode",
+                         "autoenc_variational_create", "autoenc_variational_fit", "autoenc_variational_encode", "autoenc_variational_encode_decode",
+                         "autoenc_denoise_create", "autoenc_denoise_fit", "autoenc_denoise_encode", "autoenc_denoise_encode_decode"))

@@ -71,8 +71,10 @@ def ts_conv1d_train(epochs, lr, model, train_loader, opt_func=torch.optim.SGD):
       # clear the gradients of all optimized variables
       model.zero_grad()
       # forward pass: compute predicted outputs by passing inputs to the model
-      output = model(data.float())
-      
+      device = next(model.parameters()).device
+      output = model(data.float().to(device))
+      target = target.to(device)
+            
       # calculate the loss
       loss = criterion(output, target.float())
       
@@ -151,11 +153,11 @@ def ts_conv1d_predict(model, df_test):
   outputs = []
   with torch.no_grad():
     for xb, yb in test_loader:
-      output = model(xb.float())
+      device = next(model.parameters()).device
+      output = model(xb.float().to(device))
       outputs.append(output)
   
   test_predictions = torch.vstack(outputs).squeeze(1)  
-  test_predictions = test_predictions.flatten().numpy()
+  test_predictions = test_predictions.flatten().cpu().numpy()
   
   return test_predictions
-

@@ -7,7 +7,7 @@
 #'@return returns a `ts_lstm` object.
 #'@examples
 #'#See an example of using `ts_ts_lstmconv1d` at this
-#'#[link](https://github.com/cefet-rj-dal/daltoolbox/blob/main/timeseries/ts_lstm.ipynb)
+#'#https://github.com/cefet-rj-dal/daltoolbox/blob/main/timeseries/ts_lstm.md
 #'@import reticulate
 #'@export
 ts_lstm <- function(preprocess = NA, input_size = NA, epochs = 10000L) {
@@ -42,7 +42,19 @@ do_predict.ts_lstm <- function(obj, x) {
 
   X_values <- as.data.frame(x)
   X_values$t0 <- 0
-  prediction <- ts_lstm_predict(obj$model, X_values)
-  prediction <- as.vector(prediction)
+
+  n <- nrow(X_values)
+  if (n > 1) {
+    prediction <- ts_lstm_predict(obj$model, X_values)
+    prediction <-unlist(prediction$tolist())
+  }
+  else if (n == 1) {
+    X_values <- rbind(X_values,X_values)
+    prediction <- ts_lstm_predict(obj$model, X_values)
+    prediction <-unlist(prediction$tolist())[1]
+  }
+  else
+    prediction <- NA
+
   return(prediction)
 }
