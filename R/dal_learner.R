@@ -13,7 +13,7 @@ dal_learner <- function() {
   return(obj)
 }
 
-#'@export
+#'@exportS3Method action dal_learner
 action.dal_learner <- function(obj, ...) {
   thiscall <- match.call(expand.dots = TRUE)
   thiscall[[1]] <- as.name("predict")
@@ -30,23 +30,20 @@ action.dal_learner <- function(obj, ...) {
 #'@examples
 #'data(iris)
 #'slevels <- levels(iris$Species)
-
 #classification learner using decision tree
 #'model <- cla_dtree("Species", slevels)
 #'model <- fit(model, iris)
 #'prediction <- predict(model, iris)
-
 # categorical mapping for predictand
 #'predictand <- adjust_class_label(iris[,"Species"])
 #'test_eval <- evaluate(model, predictand, prediction)
 #'test_eval$metrics
-
 #'@export
 evaluate <- function(obj, ...) {
   UseMethod("evaluate")
 }
 
-#'@export
+#'@exportS3Method evaluate default
 evaluate.default <- function(obj, ...) {
   return(NULL)
 }

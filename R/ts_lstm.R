@@ -18,8 +18,7 @@ ts_lstm <- function(preprocess = NA, input_size = NA, epochs = 10000L) {
   return(obj)
 }
 
-
-#'@export
+#'@exportS3Method do_fit ts_lstm
 do_fit.ts_lstm <- function(obj, x, y) {
   if (!exists("ts_lstm_create"))
     reticulate::source_python(system.file("python", "ts_lstm.py", package = "daltoolbox"))
@@ -35,7 +34,7 @@ do_fit.ts_lstm <- function(obj, x, y) {
   return(obj)
 }
 
-#'@export
+#'@exportS3Method do_predict ts_lstm
 do_predict.ts_lstm <- function(obj, x) {
   if (!exists("ts_lstm_predict"))
     reticulate::source_python(system.file("python", "ts_lstm.py", package = "daltoolbox"))
@@ -44,17 +43,6 @@ do_predict.ts_lstm <- function(obj, x) {
   X_values$t0 <- 0
 
   n <- nrow(X_values)
-  if (n > 1) {
-    prediction <- ts_lstm_predict(obj$model, X_values)
-    prediction <-unlist(prediction$tolist())
-  }
-  else if (n == 1) {
-    X_values <- rbind(X_values,X_values)
-    prediction <- ts_lstm_predict(obj$model, X_values)
-    prediction <-unlist(prediction$tolist())[1]
-  }
-  else
-    prediction <- NA
-
+  prediction <- ts_lstm_predict(obj$model, X_values)
   return(prediction)
 }
