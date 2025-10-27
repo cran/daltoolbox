@@ -1,6 +1,6 @@
 Package: daltoolbox
 Title: Leveraging Experiment Lines to Data Analytics
-Version: 1.2.737
+Version: 1.2.747
 Authors@R: 
   c(    person(given = "Eduardo", family = "Ogasawara", role = c("aut", "ths", "cre"), 
                email = "eogasawara@ieee.org", comment = c(ORCID = "0000-0002-0466-0626")),
@@ -26,11 +26,11 @@ URL: https://cefet-rj-dal.github.io/daltoolbox/,
 BugReports: https://github.com/cefet-rj-dal/daltoolbox/issues
 Encoding: UTF-8
 Depends: R (>= 4.1.0)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Imports: FNN, caret, class, cluster, dbscan, dplyr, e1071, ggplot2,
         nnet, randomForest, reshape, tree
 NeedsCompilation: no
-Packaged: 2025-08-02 17:21:46 UTC; gpca
+Packaged: 2025-10-26 05:19:39 UTC; gpca
 Author: Eduardo Ogasawara [aut, ths, cre] (ORCID:
     <https://orcid.org/0000-0002-0466-0626>),
   Ana Carolina Sá [aut],
@@ -49,4 +49,4 @@ Author: Eduardo Ogasawara [aut, ths, cre] (ORCID:
   CEFET/RJ [cph]
 Maintainer: Eduardo Ogasawara <eogasawara@ieee.org>
 Repository: CRAN
-Date/Publication: 2025-08-20 17:00:26 UTC
+Date/Publication: 2025-10-27 06:10:50 UTC

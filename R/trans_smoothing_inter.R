@@ -1,7 +1,10 @@
-#'@title Smoothing by interval
-#'@description The "smoothing by interval" function is used to apply a smoothing technique to a vector or time series data using a moving window approach.
+#'@title Smoothing by equal interval
+#'@description Discretize a numeric vector into `n` equal‑width intervals (robust bounds via boxplot whiskers)
+#' and replace each value by the bin mean.
 #'@param n number of bins
 #'@return returns an object of class `smoothing_inter`
+#'@references
+#' Han, J., Kamber, M., Pei, J. (2011). Data Mining: Concepts and Techniques. (Discretization)
 #'@examples
 #'data(iris)
 #'obj <- smoothing_inter(n = 2)
@@ -27,6 +30,7 @@ fit.smoothing_inter <- function(obj, data, ...) {
   else {
     v <- data
     n <- obj$n
+    # use boxplot whiskers as robust min/max boundaries
     bp <- graphics::boxplot(v, range=1.5, plot = FALSE)
     bimax <- bp$stats[5]
     bimin <- bp$stats[1]
@@ -34,6 +38,7 @@ fit.smoothing_inter <- function(obj, data, ...) {
       bimax = max(v)
       bimin = min(v)
     }
+    # create equally spaced intervals across [bimin, bimax]
     obj$interval <- seq(from = bimin, to = bimax, by = (bimax-bimin)/n)
     obj <- fit.smoothing(obj, data)
   }

@@ -1,9 +1,11 @@
-#'@title Regression Tune
-#'@description Creates an object for tuning regression models
+#'@title Regression tuning (k-fold CV)
+#'@description Tune hyperparameters of a base regressor via k‑fold cross‑validation minimizing an error metric (MSE).
 #'@param base_model base model for tuning
 #'@param folds number of folds for cross-validation
 #'@param ranges a list of hyperparameter ranges to explore
 #'@return returns a `reg_tune` object.
+#'@references
+#' Kohavi, R. (1995). A Study of Cross-Validation and Bootstrap for Accuracy Estimation and Model Selection.
 #'@examples
 #'# preparing dataset for random sampling
 #'data(Boston)
@@ -51,6 +53,7 @@ fit.reg_tune <- function(obj, data, ...) {
   }
 
   evaluate_error <- function(model, data) {
+    # compute MSE via evaluate()
     x <- as.matrix(data[,model$x])
     y <- data[,model$attribute]
     prediction <- as.vector(stats::predict(model, x))
@@ -117,6 +120,7 @@ select_hyper.reg_tune <- function(obj, hyperparameters) {
   mim_error <- hyper_summary |> dplyr::summarise(error = min(error))
 
   key <- which(hyper_summary$error == mim_error$error)
+  # tie-breaker: choose smallest key among minima
   i <- min(hyper_summary$key[key])
   return(i)
 }

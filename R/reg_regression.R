@@ -1,6 +1,5 @@
-#'@title Regression
-#'@description Ancestor class for regression problems.
-#'This ancestor class is used to define and manage the target attribute for regression tasks.
+#'@title Regression base class
+#'@description Ancestor class for regression models. Stores the target attribute and provides common evaluation metrics.
 #'@param attribute attribute target to model building
 #'@return returns a regression object
 #'@examples
@@ -19,6 +18,7 @@ evaluate.regression <- function(obj, values, prediction, ...) {
     if (length(actual) != length(prediction))
       stop("actual and prediction have different lengths")
     n <- length(actual)
+    # mean squared error
     res <- mean((actual - prediction)^2)
     res
   }
@@ -27,6 +27,7 @@ evaluate.regression <- function(obj, values, prediction, ...) {
     if (length(actual) != length(prediction))
       stop("actual and prediction have different lengths")
     n <- length(actual)
+    # symmetric mean absolute percentage error
     res <- (1/n) * sum(abs(actual - prediction)/((abs(actual) +
                                                     abs(prediction))/2))
     res
@@ -35,6 +36,7 @@ evaluate.regression <- function(obj, values, prediction, ...) {
   R2 <- function (actual, prediction) {
     if (length(actual) != length(prediction))
       stop("actual and prediction have different lengths")
+    # coefficient of determination
     res <-  1 - sum((prediction - actual)^2)/sum((mean(actual) - actual)^2)
     res
   }

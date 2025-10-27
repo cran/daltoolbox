@@ -1,9 +1,11 @@
 #'@title Decision Tree for regression
-#'@description Creates a regression object that
-#' uses the Decision Tree method for regression
-#' It wraps the tree library.
+#'@description Regression tree using recursive partitioning via the `tree` package.
+#'@details Splits are chosen to reduce squared error within nodes; result is an interpretable set of piecewise constants.
 #'@param attribute attribute target to model building.
 #'@return returns a decision tree regression object
+#'@references
+#' Breiman, L., Friedman, J., Olshen, R., and Stone, C. (1984).
+#' Classification and Regression Trees. Wadsworth.
 #'@examples
 #'data(Boston)
 #'model <- reg_dtree("medv")
@@ -32,8 +34,10 @@ reg_dtree <- function(attribute) {
 #'@exportS3Method fit reg_dtree
 fit.reg_dtree <- function(obj, data, ...) {
   data <- adjust_data.frame(data)
+  # record features used to train
   obj <- fit.predictor(obj, data)
 
+  # build formula target ~ .
   regression <- formula(paste(obj$attribute, "  ~ ."))
   obj$model <- tree::tree(regression, data)
 
@@ -43,6 +47,7 @@ fit.reg_dtree <- function(obj, data, ...) {
 #'@exportS3Method predict reg_dtree
 predict.reg_dtree <- function(object, x, ...) {
   x <- adjust_data.frame(x)
+  # use same predictors as training
   x <- x[,object$x]
   prediction <- predict(object$model, x, type="vector")
   return(prediction)

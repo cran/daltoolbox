@@ -1,5 +1,5 @@
 #'@title Adjust to matrix
-#'@description Converts a dataset to a matrix format if it is not already in that format
+#'@description Coerce an object to `matrix` if needed (useful before algorithms that expect matrices).
 #'@param data dataset
 #'@return returns an adjusted matrix
 #'@examples
@@ -8,6 +8,7 @@
 #'@export
 adjust_matrix <- function(data) {
   if(!is.matrix(data)) {
+    # coerce data.frame/vectors to matrix
     return(as.matrix(data))
   }
   else
@@ -15,7 +16,7 @@ adjust_matrix <- function(data) {
 }
 
 #'@title  Adjust to data frame
-#'@description Converts a dataset to a `data.frame` if it is not already in that format
+#'@description Coerce an object to `data.frame` if needed (useful for S3 methods in this package).
 #'@param data dataset
 #'@return returns a data.frame
 #'@examples
@@ -24,6 +25,7 @@ adjust_matrix <- function(data) {
 #'@export
 adjust_data.frame <- function(data) {
   if(!is.data.frame(data)) {
+    # coerce matrix/vectors to data.frame
     return(as.data.frame(data))
   }
   else
@@ -31,7 +33,8 @@ adjust_data.frame <- function(data) {
 }
 
 #'@title Adjust factors
-#'@description Converts a vector into a factor with specified levels and labels
+#'@description Convert a vector to a factor with specified internal levels (`ilevels`) and labels (`slevels`).
+#'@details Numeric vectors are first converted to factors with `ilevels` as the level order, then relabeled to `slevels`.
 #'@param value vector to be converted into factor
 #'@param ilevels order for categorical values
 #'@param slevels labels for categorical values
@@ -47,8 +50,8 @@ adjust_factor <- function(value, ilevels, slevels) {
 }
 
 #'@title Adjust categorical mapping
-#'@description Converts a vector into a categorical mapping, where each category is represented by a specific value.
-#'By default, the values represent binary categories (true/false)
+#'@description One‑hot encode a factor vector into a matrix of indicator columns.
+#'@details Values are mapped to `valTrue`/`valFalse` (default 1/0). The resulting matrix has column names equal to levels(x).
 #'@param x vector to be categorized
 #'@param valTrue value to represent true
 #'@param valFalse value to represent false
@@ -58,6 +61,7 @@ adjust_class_label <- function (x, valTrue = 1, valFalse = 0)
 {
   n <- length(x)
   x <- as.factor(x)
+  # one-hot encode factor levels into a matrix
   res <- matrix(valFalse, n, length(levels(x)))
   res[(1:n) + n * (unclass(x) - 1)] <- valTrue
   dimnames(res) <- list(names(x), levels(x))

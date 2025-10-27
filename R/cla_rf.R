@@ -1,13 +1,15 @@
 #'@title Random Forest for classification
-#'@description Creates a classification object that
-#' uses the Random Forest method
-#' It wraps the randomForest library.
+#'@description Ensemble classifier of decision trees using `randomForest::randomForest`.
+#'@details Combines many decorrelated trees to reduce variance. Key hyperparameters: `ntree`, `mtry`, `nodesize`.
 #'@param attribute attribute target to model building
 #'@param slevels possible values for the target classification
 #'@param nodesize node size
 #'@param ntree number of trees
 #'@param mtry number of attributes to build tree
 #'@return returns a classification object
+#'@references
+#' Breiman, L. (2001). Random Forests. Machine Learning 45(1):5–32.
+#' Liaw, A. and Wiener, M. (2002). Classification and Regression by randomForest. R News.
 #'@examples
 #'data(iris)
 #'slevels <- levels(iris$Species)
@@ -41,9 +43,12 @@ cla_rf <- function(attribute, slevels, nodesize = 5, ntree = 10, mtry = NULL) {
 #'@exportS3Method fit cla_rf
 fit.cla_rf <- function(obj, data, ...) {
   data <- adjust_data.frame(data)
+  # convert target to factor and align levels
   data[,obj$attribute] <- adjust_factor(data[,obj$attribute], obj$ilevels, obj$slevels)
+  # record feature set
   obj <- fit.predictor(obj, data)
 
+  # default mtry heuristic for classification
   if (is.null(obj$mtry))
     obj$mtry <- ceiling(sqrt(ncol(data)))
 
@@ -58,6 +63,7 @@ fit.cla_rf <- function(obj, data, ...) {
 #'@exportS3Method predict cla_rf
 predict.cla_rf  <- function(object, x, ...) {
   x <- adjust_data.frame(x)
+  # ensure consistent predictors
   x <- x[,object$x, drop = FALSE]
 
   prediction <- predict(object$model, x, type="prob")

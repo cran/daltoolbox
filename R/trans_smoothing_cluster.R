@@ -1,10 +1,10 @@
-#'@title Smoothing by cluster
-#'@description Uses clustering method to perform data smoothing.
-#' The input vector is divided into clusters using the k-means algorithm.
-#' The mean of each cluster is then calculated and used as the
-#' smoothed value for all observations within that cluster.
+#'@title Smoothing by clustering (k-means)
+#'@description Quantize a numeric vector into `n` levels using k‑means on the values and
+#' replace each value by its cluster mean (vector quantization).
 #'@param n number of bins
 #'@return returns an object of class `smoothing_cluster`
+#'@references
+#' MacQueen, J. (1967). Some Methods for classification and Analysis of Multivariate Observations.
 #'@examples
 #'data(iris)
 #'obj <- smoothing_cluster(n = 2)
@@ -30,8 +30,10 @@ fit.smoothing_cluster <- function(obj, data, ...) {
   else {
     v <- data
     n <- obj$n
+    # cluster the values and derive cut points from cluster centers
     km <- stats::kmeans(x = v, centers = n)
     s <- sort(km$centers)
+    # midpoints between sorted centers define bin boundaries
     s <- (s[1:n-1]+s[2:n])/2
     obj$interval <- c(min(v), s, max(v))
     obj <- fit.smoothing(obj, data)

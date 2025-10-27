@@ -1,12 +1,16 @@
 #'@title SVM for regression
-#'@description Creates a regression object that
-#' uses the Support Vector Machine (SVM) method for regression
-#' It wraps the e1071 and svm library.
+#'@description Support Vector Regression (SVR) using `e1071::svm`.
+#'@details SVR optimizes a margin with an epsilon‑insensitive loss around the regression function.
+#' The `cost` controls regularization strength; `epsilon` sets the width of the insensitive tube; and
+#' `kernel` defines the feature map (linear, radial, polynomial, sigmoid).
 #'@param attribute attribute target to model building
 #'@param epsilon parameter that controls the width of the margin around the separating hyperplane
 #'@param cost parameter that controls the trade-off between having a wide margin and correctly classifying training data points
 #'@param kernel the type of kernel function to be used in the SVM algorithm (linear, radial, polynomial, sigmoid)
 #'@return returns a SVM regression object
+#'@references
+#' Drucker, H., Burges, C., Kaufman, L., Smola, A., Vapnik, V. (1997). Support Vector Regression Machines.
+#' Chang, C.-C. and Lin, C.-J. (2011). LIBSVM: A library for support vector machines.
 #'@examples
 #'data(Boston)
 #'model <- reg_svm("medv", epsilon=0.2,cost=40.000)
@@ -39,6 +43,7 @@ reg_svm <- function(attribute, epsilon=0.1, cost=10, kernel="radial") {
 #'@exportS3Method fit reg_svm
 fit.reg_svm <- function(obj, data, ...) {
   data <- adjust_data.frame(data)
+  # record feature names for consistency in predict
   obj <- fit.predictor(obj, data)
 
   x <- data[,obj$x]
@@ -52,6 +57,7 @@ fit.reg_svm <- function(obj, data, ...) {
 #'@exportS3Method predict reg_svm
 predict.reg_svm  <- function(object, x, ...) {
   x <- adjust_data.frame(x)
+  # use same predictors as during training
   x <- x[,object$x]
   prediction <- predict(object$model, x)
   return(prediction)

@@ -1,12 +1,14 @@
 #'@title MLP for regression
-#'@description Creates a regression object that
-#' uses the Multi-Layer Perceptron (MLP) method.
-#' It wraps the nnet library.
+#'@description Multi-Layer Perceptron regression using `nnet::nnet` (single hidden layer).
+#'@details Feedforward neural network with `size` hidden units and L2 regularization controlled by `decay`.
+#' Data should be scaled for stable training.
 #'@param attribute attribute target to model building
 #'@param size number of neurons in hidden layers
 #'@param decay decay learning rate
 #'@param maxit number of maximum iterations for training
 #'@return returns a object of class `reg_mlp`
+#'@references
+#' Bishop, C. M. (1995). Neural Networks for Pattern Recognition. Oxford University Press.
 #'@examples
 #'data(Boston)
 #'model <- reg_mlp("medv", size=5, decay=0.54)
@@ -37,11 +39,14 @@ reg_mlp <- function(attribute, size=NULL, decay=0.05, maxit=1000) {
 #'@exportS3Method fit reg_mlp
 fit.reg_mlp <- function(obj, data, ...) {
   data <- adjust_data.frame(data)
+  # record feature names, excluding the target
   obj <- fit.predictor(obj, data)
 
+  # default hidden size heuristic if not provided
   if (is.null(obj$size))
     obj$size <- ceiling(ncol(data)/3)
 
+  # split features/target
   x <- data[,obj$x]
   y <- data[,obj$attribute]
 
@@ -53,6 +58,7 @@ fit.reg_mlp <- function(obj, data, ...) {
 #'@exportS3Method predict reg_mlp
 predict.reg_mlp  <- function(object, x, ...) {
   x <- adjust_data.frame(x)
+  # keep feature columns aligned with training
   x <- x[,object$x]
   prediction <- predict(object$model, x)
   return(prediction)

@@ -1,10 +1,12 @@
 #'@title DBSCAN
-#'@description Creates a clusterer object that
-#' uses the DBSCAN method
-#' It wraps the dbscan library.
+#'@description Density-Based Spatial Clustering of Applications with Noise using `dbscan::dbscan`.
+#'@details Discovers clusters as dense regions separated by sparse areas. Hyperparameters are `eps` (neighborhood radius)
+#' and `minPts` (minimum points). If `eps` is missing, it is estimated from the kNN distance curve elbow.
 #'@param eps distance value
 #'@param minPts minimum number of points
 #'@return returns a dbscan object
+#'@references
+#' Ester, M., Kriegel, H.-P., Sander, J., Xu, X. (1996). A Density-Based Algorithm for Discovering Clusters in Large Spatial Databases with Noise.
 #'@examples
 #'# setup clustering
 #'model <- cluster_dbscan(minPts = 3)
@@ -42,6 +44,7 @@ cluster_dbscan <- function(minPts = 3, eps = NULL) {
 #'@exportS3Method fit cluster_dbscan
 fit.cluster_dbscan <- function(obj, data, ...) {
   if (is.null(obj$eps)) {
+    # sort k-NN distances and pick epsilon at elbow (max curvature)
     t <- sort(dbscan::kNNdist(data, k = obj$minPts))
     y <- t
     myfit <- fit_curvature_max()
@@ -59,6 +62,7 @@ cluster.cluster_dbscan <- function(obj, data, ...) {
   cluster <- db_cluster$cluster
 
   #intrinsic quality metric
+  # number of noise points (cluster 0)
   null_cluster <- length(cluster[cluster==0])
   attr(cluster, "metric") <- null_cluster
 

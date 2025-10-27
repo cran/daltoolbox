@@ -1,9 +1,10 @@
-#'@title outliers_gaussian
-#'@description The outliers_gaussian class uses box-plot definition for outliers_gaussian.
-#'An outlier is a value that is below than \eqn{\overline{x} - 3 \sigma_x} or higher than \eqn{\overline{x} + 3 \sigma_x}.
-#'The class remove outliers_gaussian for numeric attributes.
+#'@title Outlier removal by Gaussian 3-sigma rule
+#'@description Removes outliers from numeric columns using the 3‑sigma rule under a Gaussian assumption:
+#' values outside mean ± alpha·sd are flagged as outliers.
 #'@param alpha gaussian threshold (default 3)
 #'@return returns an outlier object
+#'@references
+#' Pukelsheim, F. (1994). The Three Sigma Rule. The American Statistician 48(2):88–91.
 #'@examples
 #'# code for outlier removal
 #' out_obj <- outliers_gaussian() # class for outlier analysis
@@ -36,6 +37,7 @@ fit.outliers_gaussian <- function(obj, data, ...) {
     if (nrow(data) >= 30) {
       for (i in 1:ncol(data)) {
         if (is.numeric(data[,i])) {
+          # mean ± alpha * sd per numeric column
           q <- base::mean(data[,i])
           s <- stats::sd(data[,i])
           lower_threshold[i] <- q - obj$alpha*s
@@ -46,6 +48,7 @@ fit.outliers_gaussian <- function(obj, data, ...) {
   }
   else {
     if ((length(data) >= 30) && is.numeric(data)) {
+      # vector input: mean ± alpha * sd
       q <- mean(data)
       s <- sd(data)
       lower_threshold <- q - obj$alpha*s

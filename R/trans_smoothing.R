@@ -1,9 +1,9 @@
-#'@title Smoothing
-#'@description Smoothing is a statistical technique used to reduce
-#' the noise in a signal or a dataset by removing the high-frequency components.
-#' The smoothing level is associated with the number of bins used.
-#' There are alternative methods to establish the smoothing:
-#' equal interval, equal frequency, and clustering.
+#'@title Smoothing (binning/quantization)
+#'@description Family of smoothing methods that reduce noise by replacing values with the mean of a bin/cluster.
+#' Supported strategies: equal‑interval bins, equal‑frequency (quantile) bins, and clustering‑based bins (k‑means).
+#'@details The smoothing level is controlled by `n` (number of bins/levels). The helper `tune()` can choose
+#' an `n` by locating the elbow (maximum curvature) of the MSE curve across candidates. After `fit()`,
+#' values are mapped to bin means via `transform()`.
 #'@param n number of bins
 #'@return returns an object of class `smoothing`
 #'@examples
@@ -29,11 +29,13 @@ smoothing <- function(n) {
       obj$n <- i
       obj <- fit(obj, data)
       vm <- transform(obj, data)
+      # evaluate smoothing via MSE to pick best n
       mse <- mean((data - vm)^2, na.rm = TRUE)
       row <- c(mse , i)
       opt <- rbind(opt, row)
     }
     colnames(opt)<-c("mean","num")
+    # choose n at elbow point of error curve
     curv <- fit_curvature_max()
     res <- transform(curv, opt$mean)
     obj$n <- res$x
@@ -51,6 +53,7 @@ fit.smoothing <- function(obj, data, ...) {
   interval[1] <- min(v)
   interval[length(interval)] <- max(v)
   interval.adj <- interval
+  # extend first/last boundaries to cover all values in cut()
   interval.adj[1] <- -.Machine$double.xmax
   interval.adj[length(interval)] <- .Machine$double.xmax
   obj$interval <- interval
@@ -83,6 +86,7 @@ evaluate.smoothing <- function(obj, data, attribute, ...) {
     tbl <- base::merge(x=tbl, y=tbs, by.x="x", by.y="x")
     tbl$e <- -(tbl$qtd/tbl$t)*log(tbl$qtd/tbl$t,2)
     tbl <- tbl |> dplyr::group_by(x) |> dplyr::summarise(ce=sum(e), qtd=sum(qtd))
+    # global entropy weighted by cluster sizes
     tbl$ceg <- tbl$ce*tbl$qtd/length(obj$data)
     obj$entropy_clusters <- tbl
     obj$entropy <- sum(obj$entropy$ceg)

@@ -1,5 +1,6 @@
-#'@title Majority Classification
-#'@description This function creates a classification object that uses the majority vote strategy to predict the target attribute. Given a target attribute, the function counts the number of occurrences of each value in the dataset and selects the one that appears most often.
+#'@title Majority baseline classifier
+#'@description Trivial classifier that always predicts the most frequent class observed in the training data.
+#' Useful as a baseline.
 #'@param attribute attribute target to model building.
 #'@param slevels possible values for the target classification.
 #'@return returns a classification object.
@@ -35,6 +36,7 @@ fit.cla_majority <- function(obj, data, ...) {
   obj <- fit.predictor(obj, data)
 
   y <- adjust_class_label(data[,obj$attribute])
+  # count class occurrences and pick the most frequent (majority)
   cols <- apply(y, 2, sum)
   col <- match(max(cols),cols)
   obj$model <- list(cols=cols, col=col)
@@ -46,6 +48,7 @@ fit.cla_majority <- function(obj, data, ...) {
 predict.cla_majority <- function(object, x, ...) {
   rows <- nrow(x)
   cols <- length(object$model$cols)
+  # build probability matrix where the majority class has prob 1
   prediction <- matrix(rep.int(0, rows*cols), nrow=rows, ncol=cols)
   prediction[,object$model$col] <- 1
   prediction <- as.data.frame(prediction)

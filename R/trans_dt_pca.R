@@ -1,12 +1,15 @@
 #'@title PCA
-#'@description PCA (Principal Component Analysis) is an unsupervised
-#' dimensionality reduction technique used in data analysis and
-#' machine learning. It transforms a dataset of possibly
-#' correlated variables into a new set of uncorrelated
-#' variables called principal components.
+#'@description Principal Component Analysis (PCA) for unsupervised dimensionality reduction.
+#' Transforms correlated variables into orthogonal principal components ordered by explained variance.
+#'@details Fits PCA on (optionally) the numeric predictors only (excluding `attribute` when provided),
+#' removes constant columns, and selects the number of components by an elbow rule (minimum curvature)
+#' unless `components` is set explicitly.
 #'@param attribute target attribute to model building
 #'@param components number of components for PCA
 #'@return returns an object of class `dt_pca`
+#'@references
+#' Pearson, K. (1901). On lines and planes of closest fit to systems of points in space.
+#' Hotelling, H. (1933). Analysis of a complex of statistical variables into principal components.
 #'@examples
 #'mypca <- dt_pca("Species")
 #'# Automatically fitting number of components
@@ -35,11 +38,14 @@ fit.dt_pca <- function(obj, data, ...) {
   data <- data.frame(data)
   attribute <- obj$attribute
   if (!is.null(attribute)) {
+    # drop target column from PCA input (unsupervised)
     data[,attribute] <- NULL
   }
+  # select numeric columns only
   nums <- unlist(lapply(data, is.numeric))
   remove <- NULL
   for(j in names(nums[nums])) {
+    # remove constant columns (zero variance)
     if(min(data[,j])==max(data[,j]))
       remove <- cbind(remove, j)
   }
@@ -49,6 +55,7 @@ fit.dt_pca <- function(obj, data, ...) {
   pca_res <- stats::prcomp(data, center=TRUE, scale.=TRUE)
 
   if (is.null(obj$components)) {
+    # choose number of components via elbow (minimum curvature of cumulative variance)
     y <-  cumsum(pca_res$sdev^2/sum(pca_res$sdev^2))
     curv <-  fit_curvature_min()
     res <- transform(curv, y)
@@ -70,14 +77,17 @@ transform.dt_pca <- function(obj, data, ...) {
 
   data <- data.frame(data)
   if (!is.null(attribute)) {
+    # preserve predictand and remove from PCA input
     predictand <- data[,attribute]
     data[,attribute] <- NULL
   }
   data = as.matrix(data[ , nums])
 
+  # project to principal components
   data = data %*% pca.transf
   data = data.frame(data)
   if (!is.null(attribute)){
+    # reattach predictand
     data[,attribute] <- predictand
   }
   return(data)

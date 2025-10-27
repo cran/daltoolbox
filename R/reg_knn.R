@@ -1,9 +1,11 @@
-#'@title knn regression
-#'@description Creates a regression object that
-#' uses the K-Nearest Neighbors (knn) method for regression
+#'@title K-Nearest Neighbors (KNN) Regression
+#'@description KNN regression using `FNN::knn.reg`, predicting by averaging the targets of the k nearest neighbors.
+#'@details Non‑parametric approach suitable for local smoothing. Sensitive to feature scaling; consider normalization beforehand.
 #'@param attribute attribute target to model building
 #'@param k number of k neighbors
 #'@return returns a knn regression object
+#'@references
+#' Altman, N. (1992). An Introduction to Kernel and Nearest-Neighbor Nonparametric Regression.
 #'@examples
 #'data(Boston)
 #'model <- reg_knn("medv", k=3)
@@ -34,8 +36,10 @@ reg_knn <- function(attribute, k) {
 #'@exportS3Method fit reg_knn
 fit.reg_knn <- function(obj, data, ...) {
   data <- adjust_data.frame(data)
+  # record features used to train KNN regressor
   obj <- fit.predictor(obj, data)
 
+  # convert features to matrix as required by FNN
   x <- as.matrix(data[,obj$x])
   y <- data[,obj$attribute]
 
@@ -49,6 +53,7 @@ fit.reg_knn <- function(obj, data, ...) {
 predict.reg_knn  <- function(object, x, ...) {
   #develop from FNN https://daviddalpiaz.github.io/r4sl/knn-reg.html
   x <- adjust_data.frame(x)
+  # ensure numeric matrix with same columns used in training
   x <- as.matrix(x[,object$x])
   prediction <- FNN::knn.reg(train = object$model$x, test = x, y = object$model$y, k = object$model$k)
   return(prediction$pred)

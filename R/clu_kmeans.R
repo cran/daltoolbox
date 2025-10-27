@@ -1,9 +1,12 @@
 #'@title k-means
-#'@description Creates a clusterer object that
-#' uses the k-means method
-#' It wraps the stats library.
+#'@description k-means clustering using `stats::kmeans`.
+#'@details Partitions data into k clusters minimizing within‑cluster sum of squares. The intrinsic
+#' quality metric returned is the total within‑cluster SSE (lower is better).
 #'@param k the number of clusters to form.
 #'@return returns a k-means object.
+#'@references
+#' MacQueen, J. (1967). Some Methods for classification and Analysis of Multivariate Observations.
+#' Lloyd, S. (1982). Least squares quantization in PCM.
 #'@examples
 #'# setup clustering
 #'model <- cluster_kmeans(k=3)
@@ -40,6 +43,7 @@ cluster.cluster_kmeans <- function(obj, data, ...) {
   for (i in 1:k) {
     idx <- i == k_cluster$cluster
     center <- k_cluster$centers[i,]
+    # sum of squared distances within clusters
     dist <- dist + sum(rowSums((data[idx,] - center)^2))
   }
   attr(cluster, "metric") <- dist
