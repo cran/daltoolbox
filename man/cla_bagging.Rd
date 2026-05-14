@@ -23,6 +23,7 @@ if (requireNamespace("ipred", quietly = TRUE)) {
  model <- cla_bagging("Species", nbagg = 25)
  model <- fit(model, iris)
  pred <- predict(model, iris)
- table(pred, iris$Species)
+ eval <- evaluate(model, adjust_class_label(iris$Species), pred)
+ eval$metrics
 }
 }

@@ -8,12 +8,12 @@
 #'  model <- cla_rpart("Species")
 #'  model <- fit(model, iris)
 #'  pred <- predict(model, iris)
-#'  table(pred, iris$Species)
+#'  eval <- evaluate(model, adjust_class_label(iris$Species), pred)
+#'  eval$metrics
 #'}
 #'@export
 cla_rpart <- function(attribute) {
-  obj <- dal_learner()
-  obj$attribute <- attribute
+  obj <- classification(attribute)
   obj$model <- NULL
   class(obj) <- append("cla_rpart", class(obj))
   return(obj)
@@ -24,11 +24,12 @@ fit.cla_rpart <- function(obj, data, ...) {
   if (!requireNamespace("rpart", quietly = TRUE)) {
     stop("cla_rpart requires the 'rpart' package. Install with install.packages('rpart').")
   }
-  data <- adjust_data.frame(data)
+  prepared <- prepare_classification_data(obj, data)
+  obj <- prepared$obj
+  data <- prepared$data
   attr <- obj$attribute
   formula <- stats::formula(paste(attr, "~ ."))
   obj$model <- rpart::rpart(formula, data = data, method = "class")
-  obj$levels <- levels(data[[attr]])
   return(obj)
 }
 
@@ -36,6 +37,9 @@ fit.cla_rpart <- function(obj, data, ...) {
 #'@exportS3Method predict cla_rpart
 predict.cla_rpart <- function(object, newdata, ...) {
   newdata <- adjust_data.frame(newdata)
-  pred <- stats::predict(object$model, newdata = newdata, type = "class")
-  factor(pred, levels = object$levels)
+  x <- newdata[, object$x, drop = FALSE]
+  prediction <- stats::predict(object$model, newdata = x, type = "prob")
+  prediction <- as.data.frame(prediction)
+  colnames(prediction) <- object$slevels
+  prediction
 }

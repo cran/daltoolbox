@@ -7,16 +7,20 @@
 #'if (requireNamespace("glmnet", quietly = TRUE)) {
 #'  data(iris)
 #'  iris_bin <- iris
-#'  iris_bin$IsVersicolor <- ifelse(iris_bin$Species == "versicolor", 1, 0)
+#'  iris_bin$IsVersicolor <- factor(ifelse(
+#'    iris_bin$Species == "versicolor",
+#'    "versicolor",
+#'    "not_versicolor"
+#'  ))
 #'  model <- cla_glmnet("IsVersicolor")
 #'  model <- fit(model, iris_bin)
 #'  pred <- predict(model, iris_bin)
-#'  table(pred, iris_bin$IsVersicolor)
+#'  eval <- evaluate(model, adjust_class_label(iris_bin$IsVersicolor), pred)
+#'  eval$metrics
 #'}
 #'@export
 cla_glmnet <- function(attribute, lambda = c("lambda.min", "lambda.1se")) {
-  obj <- dal_learner()
-  obj$attribute <- attribute
+  obj <- classification(attribute)
   obj$lambda <- match.arg(lambda)
   obj$model <- NULL
   class(obj) <- append("cla_glmnet", class(obj))
@@ -28,21 +32,14 @@ fit.cla_glmnet <- function(obj, data, ...) {
   if (!requireNamespace("glmnet", quietly = TRUE)) {
     stop("cla_glmnet requires the 'glmnet' package. Install with install.packages('glmnet').")
   }
-  data <- adjust_data.frame(data)
-  attr <- obj$attribute
-  if (is.null(attr) || !attr %in% names(data)) {
-    stop("cla_glmnet: attribute not found in data.")
+  prepared <- prepare_classification_data(obj, data)
+  obj <- prepared$obj
+  data <- prepared$data
+  if (length(obj$slevels) != 2) {
+    stop("cla_glmnet supports only binary classification.", call. = FALSE)
   }
-  x <- data.matrix(data[, setdiff(names(data), attr), drop = FALSE])
-  y_raw <- data[[attr]]
-  if (is.factor(y_raw) || is.character(y_raw)) {
-    y_fac <- factor(y_raw)
-    obj$levels <- levels(y_fac)
-    y <- as.numeric(y_fac) - 1
-  } else {
-    y <- as.numeric(y_raw)
-    obj$levels <- sort(unique(y))
-  }
+  x <- data.matrix(data[, obj$x, drop = FALSE])
+  y <- as.numeric(data[[obj$attribute]]) - 1
   obj$model <- glmnet::cv.glmnet(x, y, family = "binomial", alpha = 1)
   return(obj)
 }
@@ -50,11 +47,12 @@ fit.cla_glmnet <- function(obj, data, ...) {
 #'@exportS3Method predict cla_glmnet
 predict.cla_glmnet <- function(object, newdata, ...) {
   newdata <- adjust_data.frame(newdata)
-  x <- data.matrix(newdata[, setdiff(names(newdata), object$attribute), drop = FALSE])
+  x <- data.matrix(newdata[, object$x, drop = FALSE])
   prob <- as.numeric(stats::predict(object$model, newx = x, s = object$lambda, type = "response"))
-  pred <- ifelse(prob >= 0.5, object$levels[2], object$levels[1])
-  if (is.character(object$levels) || is.factor(object$levels)) {
-    return(factor(pred, levels = object$levels))
-  }
-  pred
+  prediction <- data.frame(
+    stats::setNames(list(1 - prob), object$slevels[1]),
+    stats::setNames(list(prob), object$slevels[2]),
+    check.names = FALSE
+  )
+  prediction
 }

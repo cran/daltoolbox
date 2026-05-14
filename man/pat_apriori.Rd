@@ -5,15 +5,39 @@
 \title{Apriori rules}
 \usage{
 pat_apriori(
-  parameter = list(supp = 0.5, conf = 0.9, minlen = 2, maxlen = 10, target = "rules"),
-  appearance = NULL,
+  target = c("rules", "frequent itemsets"),
+  supp = 0.5,
+  conf = 0.9,
+  minlen = 2,
+  maxlen = 10,
+  lhs = NULL,
+  rhs = NULL,
+  include = NULL,
+  exclude = NULL,
+  quality_filter = NULL,
   control = NULL
 )
 }
 \arguments{
-\item{parameter}{list of parameters passed to \code{arules::apriori}}
+\item{target}{mining target: \code{"rules"} or \code{"frequent itemsets"}}
 
-\item{appearance}{list of item appearance constraints}
+\item{supp}{minimum support threshold}
+
+\item{conf}{minimum confidence threshold for rules}
+
+\item{minlen}{minimum pattern length}
+
+\item{maxlen}{maximum pattern length}
+
+\item{lhs}{optional vector of items constrained to the left-hand side of rules}
+
+\item{rhs}{optional vector of items constrained to the right-hand side of rules}
+
+\item{include}{optional vector of items allowed in the discovered patterns}
+
+\item{exclude}{optional vector of items forbidden in the discovered patterns}
+
+\item{quality_filter}{optional quality filter created with \code{patutils()}}
 
 \item{control}{list of control parameters}
 }
@@ -24,12 +48,23 @@ returns a \code{pat_apriori} object
 Frequent itemsets and association rules using \code{arules::apriori}.
 }
 \examples{
-data("AdultUCI", package = "arules")
-trans <- suppressWarnings(methods::as(as.data.frame(AdultUCI), "transactions"))
-pm <- pat_apriori(parameter = list(
- supp = 0.5, conf = 0.9, minlen = 2, maxlen = 10, target = "rules"
-))
-pm <- fit(pm, trans)
-rules <- discover(pm, trans)
-arules::inspect(rules)
+if (requireNamespace("arules", quietly = TRUE)) {
+ data("AdultUCI", package = "arules")
+ trans <- suppressWarnings(methods::as(as.data.frame(AdultUCI), "transactions"))
+ utils <- patutils()
+ pm <- pat_apriori(
+   target = "rules",
+   supp = 0.2,
+   conf = 0.85,
+   minlen = 2,
+   maxlen = 3,
+   rhs = c("native-country=United-States"),
+   quality_filter = utils$quality_min(confidence = 0.9, lift = 1.03),
+   control = list(verbose = FALSE)
+ )
+ pm <- fit(pm, trans)
+ rules <- suppressWarnings(discover(pm, trans))
+ eval <- evaluate(pm, rules)
+ eval$metrics
+}
 }

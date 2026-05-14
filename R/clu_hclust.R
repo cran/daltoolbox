@@ -2,6 +2,20 @@
 #'@description Agglomerative hierarchical clustering using `stats::hclust`.
 #'@details Computes a distance matrix (optionally after scaling) and builds a dendrogram. Clusters are
 #' obtained by cutting the tree with `k` (number of clusters) or `h` (height).
+#'
+#' The base `clusterer()` uses `wcss` as a generic default, but
+#' `cluster_hclust()` specializes that choice because a hierarchical partition
+#' is obtained from a dendrogram and is better judged through
+#' separation/cohesion indices than through a centroid-style fallback alone.
+#'
+#' Default evaluation in `cluster_hclust()` is:
+#'
+#' - main metric: `metric_silhouette()`
+#' - internal evaluation: `silhouette`, `davies_bouldin`, `calinski_harabasz`
+#' - external evaluation: `entropy`, `purity`, `adjusted_rand_index`
+#'
+#' The general `wcss` fallback is not kept as the main metric because the method
+#' is not fitted by directly minimizing that criterion.
 #'@param k number of clusters to cut the tree (default 2)
 #'@param h height to cut the tree (optional; if provided, overrides `k`)
 #'@param method linkage method passed to `stats::hclust` (default "ward.D2")
@@ -10,6 +24,9 @@
 #'@return returns a hierarchical clustering object.
 #'@references
 #' Johnson, S. C. (1967). Hierarchical clustering schemes. Psychometrika.
+#' Rousseeuw, P. J. (1987). Silhouettes: A graphical aid to the interpretation and validation of cluster analysis.
+#' Davies, D. L., & Bouldin, D. W. (1979). A cluster separation measure.
+#' Calinski, T., & Harabasz, J. (1974). A dendrite method for cluster analysis.
 #'@examples
 #'data(iris)
 #'model <- cluster_hclust(k = 3)
@@ -17,14 +34,26 @@
 #'clu <- cluster(model, iris[,1:4])
 #'table(clu)
 #'@export
-cluster_hclust <- function(k = 2, h = NULL, method = "ward.D2", dist = "euclidean", scale = TRUE) {
+cluster_hclust <- function(k = 2, h = NULL,
+                           method = c("ward.D2", "ward.D", "single", "complete", "average", "mcquitty", "median", "centroid"),
+                           dist = c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski"),
+                           scale = TRUE) {
+  method <- match.arg(method)
+  dist <- match.arg(dist)
   obj <- clusterer()
+  utils <- obj$clu_utils
   obj$k <- k
   obj$h <- h
   obj$method <- method
   obj$dist <- dist
   obj$scale <- scale
   obj$hc <- NULL
+  obj$metric <- utils$metric_silhouette
+  obj$metric_name <- "silhouette"
+  obj$selector <- utils$selector_best
+  obj$selector_name <- "best"
+  obj$eval_internal <- list(utils$metric_silhouette, utils$metric_davies_bouldin, utils$metric_calinski_harabasz)
+  obj$eval_external <- list(utils$metric_entropy, utils$metric_purity, utils$metric_adjusted_rand_index)
   class(obj) <- append("cluster_hclust", class(obj))
   return(obj)
 }
@@ -32,6 +61,9 @@ cluster_hclust <- function(k = 2, h = NULL, method = "ward.D2", dist = "euclidea
 #'@importFrom stats hclust dist
 #'@exportS3Method fit cluster_hclust
 fit.cluster_hclust <- function(obj, data, ...) {
+  prepared <- clusterer_prepare_fit(obj, data)
+  obj <- prepared$obj
+  data <- prepared$data
   x <- as.matrix(data)
   storage.mode(x) <- "double"
   if (isTRUE(obj$scale)) {
@@ -39,15 +71,17 @@ fit.cluster_hclust <- function(obj, data, ...) {
   }
   d <- stats::dist(x, method = obj$dist)
   obj$hc <- stats::hclust(d, method = obj$method)
+  obj$model <- obj$hc
   return(obj)
 }
 
 #'@exportS3Method cluster cluster_hclust
 cluster.cluster_hclust <- function(obj, data, ...) {
-  if (is.null(obj$hc)) {
-    obj <- fit(obj, data)
+  obj <- clusterer_require_fitted(obj)
+  if (!identical(adjust_data.frame(data), obj$train_data)) {
+    stop("cluster_hclust does not support clustering new data after fit().", call. = FALSE)
   }
-  data_mat <- as.matrix(data)
+  data_mat <- as.matrix(obj$train_data)
   storage.mode(data_mat) <- "double"
   h_val <- obj$h
   if (is.list(h_val) && length(h_val) == 1) {
@@ -63,13 +97,6 @@ cluster.cluster_hclust <- function(obj, data, ...) {
     cluster <- stats::cutree(obj$hc, k = obj$k)
   }
 
-  # intrinsic quality metric: total within-cluster SSE
-  dist <- 0
-  for (i in unique(cluster)) {
-    idx <- i == cluster
-    center <- colMeans(data_mat[idx, , drop=FALSE])
-    dist <- dist + sum(rowSums((data_mat[idx, , drop=FALSE] - center)^2))
-  }
-  attr(cluster, "metric") <- dist
-  return(cluster)
+  metric <- obj$metric(data = obj$train_data, cluster = cluster, obj = obj)$value
+  return(clusterer_attach_metric(cluster, metric, obj$metric_name))
 }

@@ -4,10 +4,28 @@
 \alias{pat_eclat}
 \title{ECLAT itemsets}
 \usage{
-pat_eclat(parameter = list(supp = 0.5, maxlen = 3), control = NULL)
+pat_eclat(
+  supp = 0.5,
+  minlen = 1,
+  maxlen = 3,
+  include = NULL,
+  exclude = NULL,
+  quality_filter = NULL,
+  control = NULL
+)
 }
 \arguments{
-\item{parameter}{list of parameters passed to \code{arules::eclat}}
+\item{supp}{minimum support threshold}
+
+\item{minlen}{minimum itemset length}
+
+\item{maxlen}{maximum itemset length}
+
+\item{include}{optional vector of items allowed in the discovered itemsets}
+
+\item{exclude}{optional vector of items forbidden in the discovered itemsets}
+
+\item{quality_filter}{optional quality filter created with \code{patutils()}}
 
 \item{control}{list of control parameters}
 }
@@ -18,10 +36,21 @@ returns a \code{pat_eclat} object
 Frequent itemsets using \code{arules::eclat}.
 }
 \examples{
-data("AdultUCI", package = "arules")
-trans <- suppressWarnings(methods::as(as.data.frame(AdultUCI), "transactions"))
-pm <- pat_eclat(parameter = list(supp = 0.5, maxlen = 3))
-pm <- fit(pm, trans)
-itemsets <- discover(pm, trans)
-arules::inspect(itemsets[1:6])
+if (requireNamespace("arules", quietly = TRUE)) {
+ data("AdultUCI", package = "arules")
+ trans <- suppressWarnings(methods::as(as.data.frame(AdultUCI), "transactions"))
+ utils <- patutils()
+  pm <- pat_eclat(
+    supp = 0.2,
+    maxlen = 3,
+    include = c("sex=Male", "income=small", "marital-status=Married-civ-spouse", "race=White"),
+    exclude = c("income=small"),
+    quality_filter = utils$quality_min(support = 0.4),
+    control = list(verbose = FALSE)
+  )
+ pm <- fit(pm, trans)
+ itemsets <- discover(pm, trans)
+ eval <- evaluate(pm, itemsets)
+ eval$metrics
+}
 }

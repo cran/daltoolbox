@@ -2,11 +2,26 @@
 #'@description Density-Based Spatial Clustering of Applications with Noise using `dbscan::dbscan`.
 #'@details Discovers clusters as dense regions separated by sparse areas. Hyperparameters are `eps` (neighborhood radius)
 #' and `minPts` (minimum points). If `eps` is missing, it is estimated from the kNN distance curve elbow.
+#'
+#' The base `clusterer()` uses `wcss` as a generic default, but
+#' `cluster_dbscan()` specializes that choice because DBSCAN does not force a
+#' centroid-based partition and can label observations as noise.
+#'
+#' Default evaluation in `cluster_dbscan()` is:
+#'
+#' - main metric: `metric_noise_points()`
+#' - internal evaluation: `noise_points`
+#' - external evaluation: `entropy`, `purity`, `adjusted_rand_index`
+#'
+#' The general `wcss` fallback is not used as the main metric because it ignores
+#' the central modeling choice of DBSCAN: distinguishing dense clusters from
+#' sparse or noisy observations.
 #'@param eps distance value
 #'@param minPts minimum number of points
 #'@return returns a dbscan object
 #'@references
 #' Ester, M., Kriegel, H.-P., Sander, J., Xu, X. (1996). A Density-Based Algorithm for Discovering Clusters in Large Spatial Databases with Noise.
+#' Zhao, Y., & Karypis, G. (2001). Criterion functions for document clustering.
 #'@examples
 #'# setup clustering
 #'model <- cluster_dbscan(minPts = 3)
@@ -25,8 +40,15 @@
 #'@export
 cluster_dbscan <- function(minPts = 3, eps = NULL) {
   obj <- clusterer()
+  utils <- obj$clu_utils
   obj$minPts <- minPts
   obj$eps <- eps
+  obj$metric <- utils$metric_noise_points
+  obj$metric_name <- "noise_points"
+  obj$selector <- utils$selector_best
+  obj$selector_name <- "best"
+  obj$eval_internal <- list(utils$metric_noise_points)
+  obj$eval_external <- list(utils$metric_entropy, utils$metric_purity, utils$metric_adjusted_rand_index)
 
   class(obj) <- append("cluster_dbscan", class(obj))
   return(obj)
@@ -43,6 +65,9 @@ cluster_dbscan <- function(minPts = 3, eps = NULL) {
 #'@importFrom dbscan kNNdist
 #'@exportS3Method fit cluster_dbscan
 fit.cluster_dbscan <- function(obj, data, ...) {
+  prepared <- clusterer_prepare_fit(obj, data)
+  obj <- prepared$obj
+  data <- prepared$data
   if (is.null(obj$eps)) {
     # sort k-NN distances and pick epsilon at elbow (max curvature)
     t <- sort(dbscan::kNNdist(data, k = obj$minPts))
@@ -51,6 +76,7 @@ fit.cluster_dbscan <- function(obj, data, ...) {
     res <- transform(myfit, y)
     obj$eps <- res$y
   }
+  obj$model <- dbscan::dbscan(data, eps = obj$eps, minPts = obj$minPts)
   return(obj)
 }
 
@@ -58,13 +84,16 @@ fit.cluster_dbscan <- function(obj, data, ...) {
 #'@importFrom dbscan dbscan
 #'@exportS3Method cluster cluster_dbscan
 cluster.cluster_dbscan <- function(obj, data, ...) {
-  db_cluster <- dbscan::dbscan(data, eps = obj$eps, minPts = obj$minPts)
-  cluster <- db_cluster$cluster
+  obj <- clusterer_require_fitted(obj)
+  if (!identical(adjust_data.frame(data), obj$train_data)) {
+    stop("cluster_dbscan does not support clustering new data after fit().", call. = FALSE)
+  }
+  cluster <- obj$model$cluster
 
   #intrinsic quality metric
   # number of noise points (cluster 0)
   null_cluster <- length(cluster[cluster==0])
-  attr(cluster, "metric") <- null_cluster
+  cluster <- clusterer_attach_metric(cluster, null_cluster, obj$metric_name)
 
   return(cluster)
 }
