@@ -1,10 +1,10 @@
 Package: daltoolbox
 Title: Leveraging Experiment Lines to Data Analytics
-Version: 1.3.747
+Version: 1.3.767
 Authors@R: 
   c(    person(given = "Eduardo", family = "Ogasawara", role = c("aut", "ths", "cre"), 
                email = "eogasawara@ieee.org", comment = c(ORCID = "0000-0002-0466-0626")),
-        person(given = "Ana Carolina", family = "SÃƒÂ¡", role = c("aut"), email = "ana.silva.17@aluno.cefet-rj.br"),
+        person(given = "Ana Carolina", family = "Sa", role = c("aut"), email = "ana.silva.17@aluno.cefet-rj.br"),
         person(given = "Antonio", family = "Castro", role = c("aut"), email = "antonio.castro@eic.cefet-rj.br"),
         person(given = "Caio", family = "Santos", role = c("aut"), email = "caio.souza.4@aluno.cefet-rj.br"),
         person(given = "Diego", family = "Carvalho", role = c("ctb"), email = "d.carvalho@ieee.org"),
@@ -33,10 +33,10 @@ Suggests: adabag, glmnet, leaps, ipred, xgboost, arulesViz, GGally,
         igraph, rpart, MASS
 Config/roxygen2/version: 8.0.0
 NeedsCompilation: no
-Packaged: 2026-05-14 04:06:31 UTC; gpca
+Packaged: 2026-07-09 13:49:49 UTC; gpca
 Author: Eduardo Ogasawara [aut, ths, cre] (ORCID:
     <https://orcid.org/0000-0002-0466-0626>),
-  Ana Carolina SÃƒÂ¡ [aut],
+  Ana Carolina Sa [aut],
   Antonio Castro [aut],
   Caio Santos [aut],
   Diego Carvalho [ctb],
@@ -52,4 +52,4 @@ Author: Eduardo Ogasawara [aut, ths, cre] (ORCID:
   CEFET/RJ [cph]
 Maintainer: Eduardo Ogasawara <eogasawara@ieee.org>
 Repository: CRAN
-Date/Publication: 2026-05-14 05:30:02 UTC
+Date/Publication: 2026-07-09 17:50:10 UTC
