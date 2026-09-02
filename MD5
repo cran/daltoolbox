@@ -1,4 +1,4 @@
-38edc22cd3c8213ff72ff29242dc8776 *DESCRIPTION
+56c780b308875c4cef1d9c0610cc2571 *DESCRIPTION
 9c8add422ce18907bdd71f2fcb273da3 *LICENSE
 1154e11eb8d23372a08e0b49e1819cb4 *NAMESPACE
 f73151f338053cf3d149425ca12fb47e *R/autoenc_base_e.R
@@ -60,10 +60,10 @@ d73cf518fbb0287fd7ad249bb3529953 *R/grf_pixel.R
 fbf508342ca71e829d4739ef8809a6d6 *R/grf_ts_pred.R
 d60519cb1f67e8919821a63080a7092b *R/pat_apriori.R
 10ff058ac18155faee4cb863b14aaa54 *R/pat_cspade.R
-e3e05a43cb7a4215f01f07488bc0c5ed *R/pat_dara.R
+cd3f391bb6d0050f3f803c59024696df *R/pat_dara.R
 3128903d51eb1318322f18d91682c2b7 *R/pat_eclat.R
 2ca598ee36e4a00b8a9f14e6c778f010 *R/pat_pattern_miner.R
-0057b9466fe0a6d0c6630260378c2fe5 *R/pat_rule_filter.R
+0a9be59f61dae149f2de11f38d283d1d *R/pat_rule_filter.R
 9ebf6a16fb2771ce5319bdb81d682240 *R/pat_threshold.R
 3cfc87745da32139f3622e481026ed7b *R/pat_utils.R
 94e6c0c6cfca1dfaddac738ccd23f0fb *R/reg_dtree.R
@@ -109,7 +109,7 @@ ab7837a2cb596b6a06a11a3187468d09 *R/trans_smoothing_freq.R
 093164b34b3d48762eb25e5bbc34ef2d *R/trans_smoothing_inter.R
 ae91cc26e05a4ccd6856e316e7649b1c *R/trans_smoothing_quantization.R
 5dab046278cdc61f96ffae5637753bb2 *R/trans_transform.R
-2d6575f2c7dcaa29358dd47a8115d6fa *README.md
+e58a12da919f19643b8cc55fcbb67b13 *README.md
 2f43421647e9bd4d663e35b14a39e93f *data/Boston.RData
 342241aa20c32921ffc623eb46487e2c *inst/logo.png
 acc6005ce5b9533fb2ebf9a8670a0bfd *inst/logo.pptx
@@ -188,11 +188,11 @@ fd636b100c34cf81bf98524d4484e23f *man/outliers_gaussian.Rd
 a022a8a1b970a182e889950b443fd9bc *man/pat_apriori.Rd
 b1869697a74c8b50e7a89b6542337794 *man/pat_confidence_threshold.Rd
 5880e83529361afe465ba2c4336d0486 *man/pat_cspade.Rd
-78d7020ba90f6793934be19fe031cbe1 *man/pat_dara.Rd
+a2d952b4d78d3d79c74a2d7faad03552 *man/pat_dara.Rd
 0da98d77b777e60ace9dd88c6b478fa8 *man/pat_dara_rules.Rd
 b0fe350eaa79687e4ed0d96969d4e026 *man/pat_eclat.Rd
 67f9cb8fcc96dd0822828edc94757e6e *man/pat_filter_rules.Rd
-e62c6c16618a5b4e78f1497ccff154c5 *man/pat_rule_filter_dara.Rd
+9eccb4698cb0fbd63a1358f61c7d2dc2 *man/pat_rule_filter_dara.Rd
 8accbdbf67b7b1eae39b1e8786987847 *man/pat_rule_filter_interest.Rd
 b5b0f360fa74fafb273741cb5c2a833e *man/pat_rule_filter_none.Rd
 9b1d4c9da4e3b0e8fbbcb83ab87596b2 *man/pat_rules_tidy.Rd
