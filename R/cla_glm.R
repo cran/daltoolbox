@@ -18,6 +18,9 @@
 #'pred <- predict(model, iris_bin)
 #'eval <- evaluate(model, adjust_class_label(iris_bin$IsVersicolor), pred)
 #'eval$metrics
+#'@references
+#' Nelder, J. A. and Wedderburn, R. W. M. (1972). Generalized Linear Models. Journal of the Royal Statistical Society, Series A, 135(3):370-384.
+#' Hosmer, D. W. and Lemeshow, S. (2000). Applied Logistic Regression (2nd ed.). Wiley.
 #'@export
 cla_glm <- function(attribute, positive, features = NULL, threshold = 0.5) {
   obj <- classification(attribute)
@@ -46,6 +49,13 @@ fit.cla_glm <- function(obj, data, ...) {
   if (!obj$positive %in% obj$slevels) {
     stop("cla_glm: positive class must be one of the target levels.", call. = FALSE)
   }
+  # binomial glm models P(Y = last factor level); relevel so the positive class is
+  # that last level. Otherwise predict() would assign P(other class) to the positive
+  # column whenever `positive` is not the last level, inverting the prediction.
+  neg <- setdiff(obj$slevels, obj$positive)
+  data[[attr]] <- stats::relevel(
+    factor(data[[attr]], levels = obj$slevels), ref = neg
+  )
   formula <- stats::formula(
     paste(attr, "~", paste(features, collapse = " + "))
   )

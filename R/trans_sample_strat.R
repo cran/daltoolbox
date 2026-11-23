@@ -25,6 +25,8 @@
 #'   tbl <- rbind(tbl, table(f$Species))
 #' }
 #' head(tbl)
+#'@references
+#' Kohavi, R. (1995). A Study of Cross-Validation and Bootstrap for Accuracy Estimation and Model Selection. IJCAI.
 #' @export
 sample_stratified <- function(attribute) {
   obj <- sample_random()
@@ -33,15 +35,28 @@ sample_stratified <- function(attribute) {
   return(obj)
 }
 
-#' @importFrom caret createDataPartition
+# Stratified partition: per class, draw round(perc * n_class) indices for the train set,
+# preserving the class proportions.
+strat_partition <- function(y, perc) {
+  y <- as.character(y)
+  idx <- integer(0)
+  for (cls in unique(y)) {
+    ci <- which(y == cls)
+    n <- length(ci)
+    n_train <- max(1L, min(as.integer(round(perc * n)), n))
+    idx <- c(idx, if (n_train >= n) ci else sample(ci, size = n_train))
+  }
+  sort(idx)
+}
+
 #' @exportS3Method train_test sample_stratified
 train_test.sample_stratified <- function(obj, data, perc = 0.8, ...) {
-  predictand <- data[,obj$attribute]
+  predictand <- data[, obj$attribute]
 
   # maintain class distribution in train/test via stratification
-  idx <- caret::createDataPartition(predictand, p = perc, list = FALSE)
-  train <- data[idx,]
-  test <- data[-idx,]
+  idx <- strat_partition(predictand, perc)
+  train <- data[idx, ]
+  test <- data[-idx, ]
   return(list(train = train, test = test))
 }
 

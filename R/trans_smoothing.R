@@ -19,6 +19,8 @@
 #'bins <- cut(iris$Sepal.Length, unique(obj$interval.adj), FALSE, include.lowest = TRUE)
 #'entro <- evaluate(obj, bins, iris$Species)
 #'entro$entropy
+#'@references
+#' Han, J., Kamber, M. and Pei, J. (2011). Data Mining: Concepts and Techniques (3rd ed.). Morgan Kaufmann. (Discretization)
 #'@export
 smoothing <- function(n) {
   obj <- dal_transform()
@@ -41,7 +43,10 @@ smoothing <- function(n) {
     # choose n at elbow point of error curve
     curv <- fit_curvature_max()
     res <- transform(curv, opt$mean)
-    obj$n <- res$x
+    # res$x is the position of max curvature: map it back to the candidate value
+    # (opt$num) and refit so interval/interval.adj match the chosen n.
+    obj$n <- opt$num[res$x]
+    obj <- fit(obj, data)
     return(obj)
   }
   class(obj) <- append("smoothing", class(obj))

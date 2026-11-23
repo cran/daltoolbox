@@ -132,6 +132,8 @@ collection includes thematic subcollections:
 
 ## Related DAL Projects
 
+- [pydaltoolbox — Python sibling
+  implementation](https://github.com/cefet-rj-dal/pydaltoolbox)
 - [DAL Toolbox website](https://cefet-rj-dal.github.io/daltoolbox/)
 - [tspredit](https://cefet-rj-dal.github.io/tspredit/)
 - [harbinger](https://cefet-rj-dal.github.io/harbinger/)
@@ -146,6 +148,15 @@ videos](https://www.youtube.com/playlist?list=PLG1M6TA-XJo8)
 
 [![Watch the playlist on
 YouTube](https://img.shields.io/badge/YouTube-Watch%20playlist-red?logo=youtube&logoColor=white)](https://www.youtube.com/playlist?list=PLG1M6TA-XJo8)
+
+------------------------------------------------------------------------
+
+## Slides and Videos
+
+- [Slide decks](https://github.com/cefet-rj-dal/daltoolbox/tree/main/examples/slides/) -
+  one presentation per topic, indexed in `examples/slides/README.md`.
+- [Video index](https://github.com/cefet-rj-dal/daltoolbox/tree/main/examples/videos/) -
+  one entry per published video, indexed in `examples/videos/README.md`.
 
 ------------------------------------------------------------------------
 

@@ -18,16 +18,21 @@ returns an object of class \code{feature_selection_fss}
 Selects numeric predictors using forward stepwise subset search.
 }
 \details{
-Uses \code{leaps::regsubsets} and keeps the subset with the highest adjusted R-squared.
-The target attribute must be numeric.
+Adds one predictor at a time (greedy forward selection) and keeps the subset
+with the highest adjusted R-squared, which penalizes adding predictors that do not pay
+for their complexity. The target attribute must be numeric.
+
+Implemented with base \code{stats::lm} (see references for the method).
 }
 \examples{
-if (requireNamespace("leaps", quietly = TRUE)) {
- data(Boston)
- fs <- feature_selection_fss("medv")
- fs <- fit(fs, Boston)
- fs$selected
- boston_fs <- transform(fs, Boston)
- names(boston_fs)
+data(mtcars)
+fs <- feature_selection_fss("mpg")
+fs <- fit(fs, mtcars)
+fs$selected
+mtcars_fs <- transform(fs, mtcars)
+names(mtcars_fs)
 }
+\references{
+Hocking, R. R. (1976). The Analysis and Selection of Variables in Linear Regression. Biometrics, 32(1):1-49.
+Miller, A. (2002). Subset Selection in Regression (2nd ed.). Chapman & Hall/CRC.
 }

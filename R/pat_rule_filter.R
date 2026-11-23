@@ -10,7 +10,7 @@
 #' class(filter)
 #' @export
 pat_rule_filter_none <- function() {
-  obj <- dal_base()
+  obj <- dal_transform()
   class(obj) <- append(c("pat_rule_filter_none", "pat_rule_filter"), class(obj))
   obj
 }
@@ -40,7 +40,7 @@ pat_rule_filter_interest <- function(lift_min = 1,
                                      support_min = NULL,
                                      confidence_min = NULL,
                                      count_min = NULL) {
-  obj <- dal_base()
+  obj <- dal_transform()
   obj$criteria <- Filter(Negate(is.null), list(
     lift_min = lift_min,
     kulc_min = kulc_min,
@@ -69,6 +69,13 @@ pat_rule_filter_interest <- function(lift_min = 1,
 #' @param use_abs If `TRUE`, rank by absolute divergence counters.
 #' @param rule_weight Optional numeric rule column used to weight rule frequencies.
 #' @return A `pat_rule_filter_dara` object.
+#' @references
+#' Baroni, L., Salles, R., Salles, S., Guedes, G., Porto, F., Bezerra, E., Barcellos, C.,
+#' Pedroso, M., & Ogasawara, E. (2020). An analysis of malaria in the Brazilian Legal
+#' Amazon using divergent association rules. Journal of Biomedical Informatics, 108, 103512.
+#'
+#' The canonical implementation is maintained in the Python `pydaltoolbox` port; this is a
+#' backport of it.
 #' @examples
 #' data <- data.frame(a = factor(c("x", "x", "y")), b = factor(c("z", "w", "z")))
 #' filter <- pat_rule_filter_dara(data, rhs_attr = "b", rhs_value = "z")
@@ -87,7 +94,7 @@ pat_rule_filter_dara <- function(data,
   if (missing(rhs_attr) || is.null(rhs_attr) || length(rhs_attr) != 1 || is.na(rhs_attr)) {
     stop("pat_rule_filter_dara requires the right-hand-side attribute in 'rhs_attr'.", call. = FALSE)
   }
-  obj <- dal_base()
+  obj <- dal_transform()
   obj$data <- adjust_data.frame(data)
   obj$rhs_attr <- rhs_attr
   obj$rhs_value <- rhs_value
@@ -113,7 +120,8 @@ pat_rule_filter_dara <- function(data,
 #'   data("AdultUCI", package = "arules")
 #'   data <- as.data.frame(AdultUCI)
 #'   data <- data[, c("workclass", "education", "marital-status", "occupation", "income")]
-#'   rules <- pat_dara_rules(data, rhs = "income=small", supp = 0.05, conf = 0.6)
+#'   pm <- fit(pat_apriori(target = "rules", supp = 0.05, conf = 0.6, rhs = "income=small"), data)
+#'   rules <- pat_rules_tidy(discover(pm, data), transactions = data)
 #'   filter <- pat_rule_filter_interest(lift_min = 1)
 #'   pat_filter_rules(rules, filter)
 #' }
@@ -132,6 +140,18 @@ pat_filter_rules <- function(rules, filter, data = NULL, ...) {
     return(pat_filter_rules_dara(rules, filter, data = data, ...))
   }
   stop("pat_filter_rules: unsupported rule filter.", call. = FALSE)
+}
+
+#' @title Transform rules with a rule filter
+#' @description Experiment Line `transform()` entry point for rule filters; delegates to `pat_filter_rules()`.
+#' @param obj A rule filter created with `pat_rule_filter_none()`, `pat_rule_filter_interest()`, or `pat_rule_filter_dara()`.
+#' @param data An `arules` rules object or a tidy rule data frame to filter.
+#' @param reference Optional transaction/reference data used to compute interest measures for `arules` rules.
+#' @param ... Additional arguments reserved for future filters.
+#' @return Filtered rules in the same representation as `data`.
+#' @exportS3Method transform pat_rule_filter
+transform.pat_rule_filter <- function(obj, data, reference = NULL, ...) {
+  pat_filter_rules(data, obj, data = reference, ...)
 }
 
 pat_filter_rules_none <- function(rules, filter, data = NULL, ...) {
@@ -278,6 +298,11 @@ pattern_miner_apply_rule_filter <- function(obj, patterns, data = NULL) {
     rule_filter <- pat_rule_filter_none()
   }
   if (!inherits(patterns, "rules")) {
+    # A no-op filter is simply skipped for non-rule patterns (e.g. frequent
+    # itemsets); only a real rule filter on non-rules is an error.
+    if (inherits(rule_filter, "pat_rule_filter_none")) {
+      return(patterns)
+    }
     stop("pattern_miner: rule_filter can only be applied to association rules.", call. = FALSE)
   }
   pat_filter_rules(patterns, rule_filter, data = data)
